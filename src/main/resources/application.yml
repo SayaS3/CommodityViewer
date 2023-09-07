@@ -1,0 +1,4 @@
+alpha:
+  vantage:
+    api:
+      key: "${API_KEY}"
