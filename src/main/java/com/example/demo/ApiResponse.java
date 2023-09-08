@@ -8,7 +8,7 @@ public class ApiResponse {
     @JsonProperty("name")
     private String name;
     @JsonProperty("interval")
-    private String interval;
+    private String interval_column;
     @JsonProperty("unit")
     private String unit;
     @JsonProperty("data")
@@ -25,12 +25,12 @@ public class ApiResponse {
         this.name = name;
     }
 
-    public String getInterval() {
-        return interval;
+    public String getInterval_column() {
+        return interval_column;
     }
 
-    public void setInterval(String interval) {
-        this.interval = interval;
+    public void setInterval_column(String interval_column) {
+        this.interval_column = interval_column;
     }
 
     public String getUnit() {

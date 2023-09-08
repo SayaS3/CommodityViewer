@@ -1,14 +1,19 @@
 package com.example.demo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 
 
-
+@Entity
+@Table(name = "DATA_POINT")
 public class DataPoint {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @JsonProperty("date")
     private String date;
     @JsonProperty("value")
-    private String value;
+    private String value_column;
 
     public DataPoint() {
     }
@@ -22,12 +27,12 @@ public class DataPoint {
         this.date = date;
     }
 
-    public String getValue() {
-        return value;
+    public String getValue_column() {
+        return value_column;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setValue_column(String value) {
+        this.value_column = value;
     }
 }
 

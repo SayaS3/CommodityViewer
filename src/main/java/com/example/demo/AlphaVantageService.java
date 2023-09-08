@@ -23,9 +23,10 @@ public class AlphaVantageService {
 
         Commodity commodity = new Commodity();
         commodity.setName(apiResponse.getName());
-        commodity.setInterval(apiResponse.getInterval());
+        commodity.setInterval_column(apiResponse.getInterval_column());
         commodity.setUnit(apiResponse.getUnit());
         commodity.setData(apiResponse.getData());
+        commodity.setCOMMODITY_TYPE(commodityType.name());
 
 
         return commodity;
