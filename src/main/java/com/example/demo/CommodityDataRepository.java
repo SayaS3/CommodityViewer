@@ -9,6 +9,6 @@ import java.util.Optional;
 public interface CommodityDataRepository extends JpaRepository<CommodityData, Long> {
     boolean existsByCommodityType(CommodityType commodityType);
     Optional<CommodityData> findByCommodityType(CommodityType commodityType);
-    // ... reszta metod ...
+
 }
 

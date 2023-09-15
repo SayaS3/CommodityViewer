@@ -4,7 +4,7 @@ public enum CommodityType {
     COPPER,
     ALUMINUM,
     WHEAT,
-    SUGAR,
-    COFFEE,
-    NATURAL_GAS
+    NATURAL_GAS,
+    BRENT,
+
 }
