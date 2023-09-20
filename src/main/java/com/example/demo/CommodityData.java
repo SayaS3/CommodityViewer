@@ -1,7 +1,7 @@
 package com.example.demo;
 
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Autowired;
+
 
 import java.util.List;
 
@@ -11,6 +11,7 @@ public class CommodityData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Enumerated(EnumType.STRING)
     @Column(unique=true)
     private CommodityType commodityType;
