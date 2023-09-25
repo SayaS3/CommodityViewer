@@ -5,6 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 @Service
 public class DataInitializationService {
 
@@ -19,6 +23,23 @@ public class DataInitializationService {
         fetchDataAndSave();
     }
 
+    public void runPythonScript() {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("python", "resources/python/main.py");
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Scheduled(fixedRate = 3600000) // co godzinę
     public void fetchDataAndSave() {
         for (CommodityType type : CommodityType.values()) {
@@ -28,7 +49,11 @@ public class DataInitializationService {
                 commodityDataService.save(commodityData);
             }
         }
+        System.out.println("Uruchamian skrypt:");
+        runPythonScript(); // Uruchom skrypt Pythona po pobraniu i zapisaniu danych
+        System.out.println("Skrypt zostal wykonany");
     }
+
 
     private CommodityData mapToCommodityData(Commodity commodity) {
         CommodityData commodityData = new CommodityData();
