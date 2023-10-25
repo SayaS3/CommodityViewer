@@ -33,7 +33,7 @@ public class AlphaVantageService {
     }
 
     private String buildUrlForCommodity(CommodityType commodityType) {
-        return ALPHA_VANTAGE_BASE_URL + commodityType.name() + "&interval=daily&apikey=" + apiKey;
+        return ALPHA_VANTAGE_BASE_URL + commodityType.name() + "&interval=monthly&apikey=" + apiKey;
     }
 }
 

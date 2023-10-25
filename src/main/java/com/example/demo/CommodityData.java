@@ -1,8 +1,10 @@
 package com.example.demo;
 
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,7 +26,6 @@ public class CommodityData {
 
     public CommodityData() {
     }
-
     public Long getId() {
         return id;
     }
@@ -53,8 +54,8 @@ public class CommodityData {
         return interval_column;
     }
 
-    public void setInterval_column(String interval) {
-        this.interval_column = interval;
+    public void setInterval_column(String interval_column) {
+        this.interval_column = interval_column;
     }
 
     public String getUnit() {
@@ -72,5 +73,4 @@ public class CommodityData {
     public void setData(List<DataPoint> data) {
         this.data = data;
     }
-
 }

@@ -73,14 +73,9 @@ def delete_previous_forecasts(commodity_id):
         trans = connection.begin()  # Rozpocznij transakcję
         try:
             result = connection.execute(text("DELETE FROM forecasts WHERE commodity_id = :commodity_id"), {"commodity_id": commodity_id})
-            if result.rowcount > 0:
-                print(f"Usunięto {result.rowcount} prognoz dla commodity_id = {commodity_id}")
-            else:
-                print(f"Brak prognoz do usunięcia dla commodity_id = {commodity_id}")
             trans.commit()  # Zatwierdź transakcję
         except Exception as e:
             trans.rollback()  # Wycofaj transakcję w przypadku błędu
-            print(f"Błąd podczas usuwania prognoz dla commodity_id = {commodity_id}: {e}")
 
 
 
@@ -93,11 +88,10 @@ def save_forecast_to_db(commodity_id, forecast):
                 connection.execute(text(
                     "INSERT INTO forecasts (commodity_id, forecast_date, forecast_value) VALUES (:commodity_id, :forecast_date, :forecast_value)"),
                                    {"commodity_id": commodity_id, "forecast_date": date, "forecast_value": value})
-                print(f"Zapisywanie prognozy dla commodity_id: {commodity_id}, data: {date}, wartość: {value}")
             trans.commit()  # Zatwierdź transakcję
         except Exception as e:
             trans.rollback()  # Wycofaj transakcję w przypadku błędu
-            print(f"Błąd podczas zapisywania prognozy dla commodity_id: {commodity_id}, data: {date}, wartość: {value}. Błąd: {e}")
+
 
 
 
