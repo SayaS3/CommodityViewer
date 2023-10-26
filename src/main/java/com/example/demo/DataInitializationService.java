@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.Double.parseDouble;
 
@@ -57,9 +58,18 @@ public class DataInitializationService {
             System.out.println("Rozpoczynam iterację dla " + type);
             if (!commodityDataService.existsByType(type)) {
                 Commodity commodity = alphaVantageService.fetchDataForCommodity(type);
+
+                // Filtrowanie pustych wartości w data_point
+                List<DataPoint> filteredData = commodity.getData().stream()
+                        .filter(dataPoint -> !dataPoint.getValue_column().equals(".") && !dataPoint.getDate().equals("."))
+                        .collect(Collectors.toList());
+
+                commodity.setData(filteredData);
+
                 System.out.println("Przed mapToCommodityData");
                 CommodityData commodityData = mapToCommodityData(commodity);
                 System.out.println("Po mapToCommodityData");
+
                 commodityDataService.save(commodityData);
                 System.out.println("Zakończono iterację dla " + type);
             }
@@ -68,6 +78,7 @@ public class DataInitializationService {
         runPythonScript(); // Uruchom skrypt Pythona po pobraniu i zapisaniu danych
         System.out.println("Skrypt został wykonany");
     }
+
 
 
 
