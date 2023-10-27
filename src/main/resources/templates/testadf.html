@@ -31,5 +31,31 @@
         <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}">Forecasts</a></li>
     </ul>
 </div>
+<h2>ADF Results</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>adfStatistic</th>
+        <th>pValue</th>
+        <th>criticalValue1Percent</th>
+        <th>criticalValue5Percent</th>
+        <th>criticalValue10Percent</th>
+        <th>isStationary</th>
+        <!-- Dodaj inne kolumny, takie jak critical values, is stationary itp. -->
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Iteruj przez wyniki ADF i wyświetl je w tabeli -->
+    <tr th:each="adfResult : ${adfResults}">
+        <td th:text="${adfResult.adfStatistic}"></td>
+        <td th:text="${adfResult.pValue}"></td>
+        <td th:text="${adfResult.criticalValue1Percent}"></td>
+        <td th:text="${adfResult.criticalValue5Percent}"></td>
+        <td th:text="${adfResult.criticalValue10Percent}"></td>
+        <td th:text="${adfResult.isStationary}"></td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>

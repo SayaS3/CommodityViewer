@@ -12,3 +12,4 @@ public interface CommodityDataRepository extends JpaRepository<CommodityData, Lo
 
 }
 
+
