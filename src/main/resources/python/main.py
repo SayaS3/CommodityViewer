@@ -47,25 +47,39 @@ def delete_previous_adf_results(commodity_id):
 
 
 
+def connect_to_database():
+    try:
+        engine = create_engine('mysql+mysqlconnector://root:bazahaslo@localhost/commodity')
+        return engine
+    except Exception as e:
+        print(f"Error connecting to the database: {e}")
+        return None
+
 def adf_test(series, commodity_id):
-    result = adfuller(series)
+    try:
+        result = adfuller(series)
+        is_stationary = result[1] <= 0.05
 
-    is_stationary = result[1] <= 0.05
+        engine = connect_to_database()
 
+        if engine:
+            data = {
+                'commodity_id': commodity_id,
+                'adf_statistic': result[0],
+                'p_value': result[1],
+                'critical_value_1_percent': result[4]['1%'],
+                'critical_value_5_percent': result[4]['5%'],
+                'critical_value_10_percent': result[4]['10%'],
+                'is_stationary': is_stationary
+            }
+            df = pd.DataFrame([data])
+            df.to_sql('adf_results', con=engine, if_exists='append', index=False)
+            print("ADF test results saved to the database.")
+        else:
+            print("Unable to connect to the database. ADF test results not saved.")
 
-    # Zapisz wyniki testu ADF w bazie danych
-    engine = create_engine('mysql+mysqlconnector://root:bazahaslo@localhost/commodity')
-    data = {
-        'commodity_id': commodity_id,
-        'adf_statistic': result[0],
-        'p_value': result[1],
-        'critical_value_1_percent': result[4]['1%'],
-        'critical_value_5_percent': result[4]['5%'],
-        'critical_value_10_percent': result[4]['10%'],
-        'is_stationary': is_stationary
-    }
-    df = pd.DataFrame([data])
-    df.to_sql('adf_results', con=engine, if_exists='append', index=False)
+    except Exception as e:
+        print(f"Error in ADF test: {e}")
 
 def delete_previous_forecasts(commodity_id):
     engine = create_engine('mysql+mysqlconnector://root:bazahaslo@localhost/commodity')
@@ -97,27 +111,34 @@ def save_forecast_to_db(commodity_id, forecast):
 
 
 def holt_winters_forecast(series):
+    try:
+        if not isinstance(series, pd.Series) or series.empty:
+            raise ValueError("Input series must be a non-empty pandas Series.")
 
-    model = ExponentialSmoothing(series, trend='add', seasonal='add', seasonal_periods=12)
-    model_fit = model.fit()
-    forecast = model_fit.forecast(steps=12)
+        model = ExponentialSmoothing(series, trend='add', seasonal='add', seasonal_periods=12, freq='MS')
+        model_fit = model.fit()
+        forecast = model_fit.forecast(steps=12)
 
-    # Pobierz ostatnią dostępną datę
-    last_date = series.index[-1]
+        # Pobierz ostatnią dostępną datę
+        last_date = series.index[-1]
 
-    # Sprawdź różnicę między dwiema ostatnimi datami
-    date_diff = series.index[-1] - series.index[-2]
+        # Sprawdź różnicę między dwiema ostatnimi datami
+        date_diff = series.index[-1] - series.index[-2]
 
+        # Utwórz zakres dat na kolejne 12 dni/miesięcy
+        if date_diff.days < 28:  # Jeśli dane są dzienne
+            date_range = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=12, freq='D')
+        else:  # Jeśli dane są miesięczne
+            date_range = pd.date_range(start=last_date + pd.offsets.MonthBegin(1), periods=12, freq='MS')
 
-    # Utwórz zakres dat na kolejne 12 dni/miesięcy
-    if date_diff.days < 28:  # Jeśli dane są dzienne'
-        date_range = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=12, freq='D')
-    else:  # Jeśli dane są miesięczne
-        date_range = pd.date_range(start=last_date + pd.offsets.MonthBegin(1), periods=12, freq='MS')
-    # Ustaw zakres dat jako indeks dla prognozy
-    forecast.index = date_range
+        # Ustaw zakres dat jako indeks dla prognozy
+        forecast.index = date_range
 
-    return forecast
+        return forecast
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
 
 
 # Wykonaj test ADF i prognozowanie dla surowców z danymi miesięcznymi

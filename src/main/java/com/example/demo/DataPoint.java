@@ -1,7 +1,6 @@
 package com.example.demo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 
 
@@ -18,7 +17,6 @@ public class DataPoint {
 
     public DataPoint() {
     }
-
 
 
     public String getDate() {

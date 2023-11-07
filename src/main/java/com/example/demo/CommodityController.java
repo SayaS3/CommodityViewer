@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,19 +40,32 @@ public class CommodityController {
     public String getCleanDataPage(@PathVariable CommodityType commodityType, Model model) {
         List<String> commodityTypes = Arrays.asList("COPPER", "ALUMINUM", "WHEAT", "NATURAL_GAS", "BRENT");
 
-        commodityService.findByType(commodityType).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
+        List<String> dates = new ArrayList<>();
+        List<Double> values = new ArrayList<>();
 
+        commodityService.findByType(commodityType).ifPresent(commodity -> {
+            model.addAttribute("selectedCommodity", commodity);
+
+            // Uzupełnij listy danymi z data_point
+            for (DataPoint dataPoint : commodity.getData()) {
+                dates.add(dataPoint.getDate());
+                values.add(Double.valueOf(dataPoint.getValue_column()));
+            }
+        });
+
+        model.addAttribute("dates", dates);
+        model.addAttribute("values", values);
         model.addAttribute("commodityTypes", commodityTypes);
-
         return "data";
     }
+
     @GetMapping("/{commodityType:[A-Za-z_]+}")
     public String getCommodityPage(@PathVariable("commodityType") CommodityType commodityType, Model model) {
 
         List<String> commodityTypes = Arrays.asList("COPPER", "ALUMINUM", "WHEAT", "NATURAL_GAS", "BRENT");
         try {
 
-        commodityService.findByType(commodityType).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
+            commodityService.findByType(commodityType).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
         } catch (IllegalArgumentException e) {
             // Wartość w ścieżce nie jest poprawnym enumem
             return "error"; // Przekieruj na stronę błędu
@@ -61,12 +75,12 @@ public class CommodityController {
 
         return "commodity";
     }
+
     @GetMapping("/{commodityType}/testadf")
     public String getTestADFPage(@PathVariable CommodityType commodityType, Model model) {
         List<String> commodityTypes = Arrays.asList("COPPER", "ALUMINUM", "WHEAT", "NATURAL_GAS", "BRENT");
 
         commodityService.findByType(commodityType).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
-
 
         CommodityData selectedCommodity = commodityService.findByType(commodityType).orElse(null);
 

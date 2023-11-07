@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Commodity Page</title>
     <link rel="stylesheet" type="text/css" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -36,6 +37,8 @@
     <!-- Tutaj możesz umieścić treść dla zakładek -->
 
     <div th:if="${selectedCommodity.data}">
+        <canvas id="myChart"></canvas>
+
         <table class="table">
             <thead>
             <tr>
@@ -57,6 +60,34 @@
     <div th:unless="${selectedCommodity.data}">
         <p>Brak danych z data_point dla tego surowca.</p>
     </div>
+
 </div>
+<script th:inline="javascript">
+    var dates = [[${dates}]];
+    var values = [[${values}]];
+    var reversedDates = dates.reverse();
+    var reversedValues = values.reverse();
+    var ctx = document.getElementById('myChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: reversedDates,
+            datasets: [{
+                label: 'Cena surowca',
+                data: reversedValues,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+
 </body>
 </html>
