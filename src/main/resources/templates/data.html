@@ -1,93 +1,124 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Commodity Page</title>
     <link rel="stylesheet" type="text/css" href="/styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 </head>
 
 <body>
 
+<!-- Header -->
+<div class="header">
+    <h1>Commodity Page</h1>
+</div>
+
 <!-- Wybór surowca -->
-<div>
-    <h3>Wybierz surowiec:</h3>
+<div class="commodity-selection">
     <ul>
         <li th:each="type : ${commodityTypes}">
-            <a th:href="@{'/' + ${type}}" th:class="${type == selectedCommodity.commodityType} ? 'selected' : ''" th:text="${type}"></a>
+            <a th:href="@{'/' + ${type}}" th:class="${type == selectedCommodity.commodityType} ? 'selected' : ''"
+               th:text="${type}"></a>
         </li>
     </ul>
 </div>
 
-<!-- Wyświetlenie danych surowca -->
-<div>
-    <h3 th:text="${selectedCommodity.name}">Nazwa surowca</h3>
-    <p th:text="${'Typ surowca: ' + selectedCommodity.commodityType}"></p>
-    <p th:text="${'Interwał: ' + selectedCommodity.interval_column}"></p>
-    <p th:text="${'Jednostka: ' + selectedCommodity.unit}"></p>
+<!-- Zawartość strony -->
+<div class="content">
+    <!-- Wyświetlenie danych surowca -->
+    <div class="commodity-info">
+        <div class="commodity-details">
+            <h3 th:text="${selectedCommodity.name}">Nazwa surowca</h3>
+            <p th:text="${'Typ surowca: ' + selectedCommodity.commodityType}"></p>
+            <p th:text="${'Interwał: ' + selectedCommodity.interval_column}"></p>
+            <p th:text="${'Jednostka: ' + selectedCommodity.unit}"></p>
 
-    <h4>Dane z data_point:</h4>
-    <!-- Dodaj linki do zakładek -->
-    <ul>
-        <li><a th:href="@{'/' + ${selectedCommodity.commodityType}}">Czyste dane</a></li>
-        <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/testadf'}">Test ADF</a></li>
-        <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}">Forecasts</a></li>
-    </ul>
+            <h4>Dane z data_point:</h4>
+            <!-- Dodaj linki do zakładek -->
+            <ul>
+                <li><a th:href="@{'/' + ${selectedCommodity.commodityType}}">Czyste dane</a></li>
+                <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/testadf'}">Test ADF</a></li>
+                <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}">Forecasts</a></li>
+            </ul>
+        </div>
+        <div class="chart-and-stats">
+            <div id="myChart"></div>
+            <div class="commodity-stats">
+                <div>
+                    <label for="chartType">Wybierz typ wykresu:</label>
+                    <select id="chartType" onchange="updateChartType()">
+                        <option value="line">Liniowy</option>
+                        <option value="bar">Słupkowy</option>
+                    </select>
+                </div>
+                <h4>Statystyki surowca:</h4>
+                <p>Minimum: <span id="minValue"></span></p>
+                <p>Maksimum: <span id="maxValue"></span></p>
+                <p>Średnia: <span id="avgValue"></span></p>
+                <p>Data początkowa: <span id="startDate"></span></p>
+                <p>Data końcowa: <span id="endDate"></span></p>
+            </div>
+        </div>
 
-    <!-- Tutaj możesz umieścić treść dla zakładek -->
+        <!-- Dodaj rozwijaną listę dla wyboru typu wykresu -->
 
-    <div th:if="${selectedCommodity.data}">
-        <canvas id="myChart"></canvas>
 
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Data</th>
-                <th>Wartość</th>
-                <!-- Dodaj inne nagłówki, jeśli są dostępne -->
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Iteruj przez dane z data_point i wyświetl wiersze tabeli -->
-            <tr th:each="dataPoint, iterStat : ${selectedCommodity.data}">
-                <td th:text="${dataPoint.date}"></td>
-                <td th:text="${dataPoint.value_column}"></td>
-                <!-- Dodaj inne komórki, jeśli są dostępne -->
-            </tr>
-            </tbody>
-        </table>
     </div>
-    <div th:unless="${selectedCommodity.data}">
-        <p>Brak danych z data_point dla tego surowca.</p>
-    </div>
-
 </div>
+
 <script th:inline="javascript">
-    var dates = [[${dates}]];
-    var values = [[${values}]];
-    var reversedDates = dates.reverse();
-    var reversedValues = values.reverse();
-    var ctx = document.getElementById('myChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: reversedDates,
-            datasets: [{
-                label: 'Cena surowca',
-                data: reversedValues,
-                borderWidth: 1
-            }]
+
+    let dates = [[${dates}]];
+    let values = [[${values}]];
+    let reversedDates = dates.reverse();
+    let reversedValues = values.reverse();
+
+    let chartType = 'line'; // Domyślny typ wykresu
+
+    let trace = {
+        x: reversedDates,
+        y: reversedValues,
+        type: chartType,
+        name: 'Cena surowca'
+    };
+
+    let layout = {
+        margin: { t: 0 },
+        xaxis: {
+            rangeslider: { visible: false },
+            type: 'date'
         },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
+        yaxis: {
+            autorange: true,
+            type: 'linear'
         }
-    });
+    };
+
+    Plotly.newPlot('myChart', [trace], layout);
+
+    // Funkcja do aktualizacji typu wykresu
+    function updateChartType() {
+        chartType = document.getElementById('chartType').value;
+        trace.type = chartType;
+        Plotly.update('myChart', { 'type': chartType });
+    }
+
+    // Dodaj obsługę zdarzeń do obszaru zaznaczenia
+    let selectedArea = {
+        x: [],
+        y: []
+    };
+
+    // Uzupełnij statystyki surowca
+    document.getElementById('minValue').innerText = Math.min(...values);
+    document.getElementById('maxValue').innerText = Math.max(...values);
+    document.getElementById('avgValue').innerText = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2);
+    document.getElementById('startDate').innerText = dates[0];
+    document.getElementById('endDate').innerText = dates[dates.length - 1];
 </script>
 
-
 </body>
+
 </html>
