@@ -33,6 +33,8 @@ public class CommodityController {
     public String getHomePage(Model model) {
         List<String> commodityTypes = Arrays.asList("COPPER", "ALUMINUM", "WHEAT", "NATURAL_GAS", "BRENT");
         model.addAttribute("commodityTypes", commodityTypes);
+        model.addAttribute("selectedCommodity", commodityTypes);
+
         return "home";
     }
 

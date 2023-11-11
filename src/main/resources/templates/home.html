@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Commodity Page</title>
@@ -8,17 +9,24 @@
 
 <body>
 
+<!-- Header -->
+<header>
+    <h1>Commodity Page</h1>
+</header>
 
 <!-- Wybór surowca -->
-<div>
-    <h3>Wybierz surowiec:</h3>
+<div class="commodity-selection">
     <ul>
         <li th:each="type : ${commodityTypes}">
-            <a th:href="@{'/' + ${type}}" th:class="${type == commodityTypes} ? 'selected' : ''" th:text="${type}"></a>
+            <a th:href="@{'/' + ${type}}" th:class="${type == selectedCommodity} ? 'selected' : ''"
+               th:text="${type}"></a>
         </li>
     </ul>
 </div>
 
 
+
+
 </body>
+
 </html>

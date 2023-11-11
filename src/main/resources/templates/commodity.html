@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Commodity Page</title>
@@ -8,28 +9,47 @@
 
 <body>
 
+<!-- Header -->
+<header>
+    <h1>Commodity Page</h1>
+</header>
+
 <!-- Wybór surowca -->
-<div>
-    <h3>Wybierz surowiec:</h3>
+<div class="commodity-selection">
     <ul>
         <li th:each="type : ${commodityTypes}">
-            <a th:href="@{'/' + ${type}}" th:class="${type == commodityTypes} ? 'selected' : ''" th:text="${type}"></a>
+            <a th:href="@{'/' + ${type}}" th:class="${type == selectedCommodity.commodityType} ? 'selected' : ''"
+               th:text="${type}"></a>
         </li>
     </ul>
 </div>
 
-<!-- Wyświetlenie danych surowca -->
-<div>
-    <h3 th:text="${selectedCommodity.name}">Nazwa surowca</h3>
-    <p th:text="${'Typ surowca: ' + selectedCommodity.commodityType}"></p>
-    <p th:text="${'Interwał: ' + selectedCommodity.interval_column}"></p>
-    <p th:text="${'Jednostka: ' + selectedCommodity.unit}"></p>
+<!-- Zawartość strony -->
+<div class="content">
+    <!-- Wyświetlenie danych surowca -->
+    <div class="commodity-info">
+        <div class="commodity-details">
+            <h3 th:text="${selectedCommodity.name}">Nazwa surowca</h3>
+            <p th:text="${'Typ surowca: ' + selectedCommodity.commodityType}"></p>
+            <p th:text="${'Interwał: ' + selectedCommodity.interval_column}"></p>
+            <p th:text="${'Jednostka: ' + selectedCommodity.unit}"></p>
 
-    <ul>
-        <li><a th:href="@{'/' + ${selectedCommodity.commodityType}+ '/data'}">Czyste dane</a></li>
-        <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/testadf'}">Test ADF</a></li>
-        <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}">Forecasts</a></li>
-    </ul>
+            <h4>Dane z data_point:</h4>
+            <!-- Dodaj linki do zakładek -->
+            <ul>
+                <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/data'}">Czyste dane</a></li>
+                <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/testadf'}">Test ADF</a></li>
+                <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}">Forecasts</a></li>
+            </ul>
+        </div>
+
+
+
+    </div>
 </div>
+
+
+
 </body>
+
 </html>
