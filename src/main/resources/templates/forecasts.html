@@ -1,57 +1,160 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Commodity Page</title>
     <link rel="stylesheet" type="text/css" href="/styles.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 </head>
 
 <body>
 
-<header>
-    <h1>Commodity Page</h1>
-</header>
+<section class="sidebar">
+    <a href="#" class="logo">
+        <i class="fab fa-slack"></i>
+        <span class="text">Admin Panel</span>
+    </a>
 
-<!-- Wybór surowca -->
-<div class="commodity-selection">
-    <ul>
-        <li th:each="type : ${commodityTypes}">
-            <a th:href="@{'/' + ${type}}" th:class="${type == selectedCommodity.commodityType} ? 'selected' : ''"
-               th:text="${type}"></a>
+    <ul class="side-menu top">
+        <li th:each="commodity : ${commodityTypes}" th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
+            <a th:href="@{'/' + ${commodity}}" class="nav-link">
+                <span th:text="${commodity}"></span>
+            </a>
         </li>
     </ul>
-</div>
-<div class="content">
-    <div class="commodity-info">
+
+
+    <ul class="side-menu">
+        <li>
+            <a href="#">
+                <i class="fas fa-cog"></i>
+                <span class="text">Settings</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" class="logout">
+                <i class="fas fa-right-from-bracket"></i>
+                <span class="text">Logout</span>
+            </a>
+        </li>
+    </ul>
+</section>
+<section class="content">
+    <nav>
+        <a href="#" class="nav-link">Categories</a>
+        <form action="#">
+            <div class="form-input">
+                <input type="search" placeholder="search..." />
+                <button class="search-btn">
+                </button>
+            </div>
+        </form>
+
+        <input type="checkbox" hidden id="switch-mode" />
+        <label for="switch-mode" class="switch-mode"></label>
+
+        <a href="#" class="notification">
+            <i class="fas fa-bell"></i>
+            <span class="num">28</span>
+        </a>
+
+        <a href="#" class="profile">
+            <img src="profile.png" alt="" />
+        </a>
+    </nav>
+    <main>
+            <h1>Dashboard</h1>
         <div class="commodity-details">
             <h3 th:text="${selectedCommodity.name}">Nazwa surowca</h3>
             <p th:text="${'Typ surowca: ' + selectedCommodity.commodityType}"></p>
             <p th:text="${'Interwał: ' + selectedCommodity.interval_column}"></p>
             <p th:text="${'Jednostka: ' + selectedCommodity.unit}"></p>
 
-            <h4>Dane z data_point:</h4>
-            <!-- Dodaj linki do zakładek -->
             <ul>
-                <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/data'}">Czyste dane</a></li>
+                <li><a th:href="@{'/' + ${selectedCommodity.commodityType}}">Data</a></li>
                 <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/testadf'}">Test ADF</a></li>
-                <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}">Forecasts</a></li>
             </ul>
         </div>
 
+        <th:block th:if="${#lists.size(forecasts) > 0}">
+            <h2>Forecasts for <span th:text="${selectedCommodity.name}"></span></h2>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Forecast Value</th>
+                    <!-- Dodaj inne nagłówki, jeśli są dostępne -->
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Iteruj przez przewidywania i wyświetl wiersze tabeli -->
+                <tr th:each="forecast : ${forecasts}">
+                    <td th:text="${forecast.forecastDate}"></td>
+                    <td th:text="${forecast.forecastValue}"></td>
+                    <!-- Dodaj inne komórki, jeśli są dostępne -->
+                </tr>
+                </tbody>
+            </table>
+        </th:block>
 
 
+    </main>
 
-<div th:if="${forecasts != null}">
-    <h3>Forecasts:</h3>
-    <ul>
-        <li th:each="forecast : ${forecasts}">
-            <p th:text="${#temporals.format(forecast.forecastDate, 'yyyy-MM-dd')}"></p>
-            <p th:text="${forecast.forecastValue}"></p>
-        </li>
-    </ul>
-</div>
+</section>
 
-</div>
+<script th:inline="javascript">
 
+    let dates = [[${dates}]];
+    let values = [[${values}]];
+    let reversedDates = dates.reverse();
+    let reversedValues = values.reverse();
+
+    let chartType = 'line'; // Domyślny typ wykresu
+
+    let trace = {
+        x: reversedDates,
+        y: reversedValues,
+        type: chartType,
+        name: 'Cena surowca'
+    };
+
+    let layout = {
+        margin: { t: 0 },
+        xaxis: {
+            rangeslider: { visible: false },
+            type: 'date'
+        },
+        yaxis: {
+            autorange: true,
+            type: 'linear'
+        }
+    };
+
+    Plotly.newPlot('myChart', [trace], layout);
+
+    // Funkcja do aktualizacji typu wykresu
+    function updateChartType() {
+        chartType = document.getElementById('chartType').value;
+        trace.type = chartType;
+        Plotly.update('myChart', { 'type': chartType });
+    }
+
+    // Dodaj obsługę zdarzeń do obszaru zaznaczenia
+    let selectedArea = {
+        x: [],
+        y: []
+    };
+
+    // Uzupełnij statystyki surowca
+    document.getElementById('minValue').innerText = Math.min(...values);
+    document.getElementById('maxValue').innerText = Math.max(...values);
+    document.getElementById('avgValue').innerText = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2);
+    document.getElementById('startDate').innerText = dates[0];
+    document.getElementById('endDate').innerText = dates[dates.length - 1];
+</script>
+<script src="app.js"></script>
 </body>
+
 </html>

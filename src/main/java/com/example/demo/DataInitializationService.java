@@ -2,7 +2,7 @@ package com.example.demo;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.lang.Double.parseDouble;
+
 
 @Service
 public class DataInitializationService {
@@ -59,10 +59,13 @@ public class DataInitializationService {
             if (!commodityDataService.existsByType(type)) {
                 Commodity commodity = alphaVantageService.fetchDataForCommodity(type);
 
-                // Filtrowanie pustych wartości w data_point
-                List<DataPoint> filteredData = commodity.getData().stream()
-                        .filter(dataPoint -> !dataPoint.getValue_column().equals(".") && !dataPoint.getDate().equals("."))
-                        .collect(Collectors.toList());
+                List<DataPoint> filteredData = new ArrayList<>();
+                if (commodity.getData() != null) {
+                    filteredData = commodity.getData().stream()
+                            .filter(dataPoint -> !dataPoint.getValue_column().equals(".") && !dataPoint.getDate().equals("."))
+                            .collect(Collectors.toList());
+                }
+
 
                 commodity.setData(filteredData);
 
@@ -90,13 +93,19 @@ public class DataInitializationService {
         commodityData.setUnit(commodity.getUnit());
         commodityData.setCommodityType(CommodityType.valueOf(commodity.getCOMMODITY_TYPE()));
 
-        // Sprawdź czy value_column to "." i usuń rekord, jeśli tak
-        if (!".".equals(commodity.getInterval_column())) {
-            commodityData.setData(commodity.getData());
+        // Check if value_column is not "." and data is not null
+        if (!".".equals(commodity.getInterval_column()) && commodity.getData() != null) {
+            // Filter and set the data
+            List<DataPoint> filteredData = commodity.getData().stream()
+                    .filter(dataPoint -> !dataPoint.getValue_column().equals(".") && !dataPoint.getDate().equals("."))
+                    .collect(Collectors.toList());
+
+            commodityData.setData(filteredData);
         }
 
         return commodityData;
     }
+
 
 
 

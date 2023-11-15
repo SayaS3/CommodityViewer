@@ -38,7 +38,7 @@ public class CommodityController {
         return "home";
     }
 
-    @GetMapping("/{commodityType}/data")
+    @GetMapping("/{commodityType:[A-Za-z_]+}")
     public String getCleanDataPage(@PathVariable CommodityType commodityType, Model model) {
         List<String> commodityTypes = Arrays.asList("COPPER", "ALUMINUM", "WHEAT", "NATURAL_GAS", "BRENT");
 
@@ -59,23 +59,6 @@ public class CommodityController {
         model.addAttribute("values", values);
         model.addAttribute("commodityTypes", commodityTypes);
         return "data";
-    }
-
-    @GetMapping("/{commodityType:[A-Za-z_]+}")
-    public String getCommodityPage(@PathVariable("commodityType") CommodityType commodityType, Model model) {
-
-        List<String> commodityTypes = Arrays.asList("COPPER", "ALUMINUM", "WHEAT", "NATURAL_GAS", "BRENT");
-        try {
-
-            commodityService.findByType(commodityType).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
-        } catch (IllegalArgumentException e) {
-            // Wartość w ścieżce nie jest poprawnym enumem
-            return "error"; // Przekieruj na stronę błędu
-        }
-
-        model.addAttribute("commodityTypes", commodityTypes);
-
-        return "commodity";
     }
 
     @GetMapping("/{commodityType}/testadf")

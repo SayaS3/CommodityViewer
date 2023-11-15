@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -8,8 +8,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class AlphaVantageService {
 
-    @Value("${alpha.vantage.api.key}")
-    private String apiKey;
+
+    private String apiKey="demo";
 
     private final String ALPHA_VANTAGE_BASE_URL = "https://www.alphavantage.co/query?function=";
 

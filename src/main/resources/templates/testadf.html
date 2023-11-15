@@ -1,69 +1,113 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Commodity Page</title>
     <link rel="stylesheet" type="text/css" href="/styles.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 </head>
 
 <body>
 
-<!-- Wybór surowca -->
-<header>
-    <h1>Commodity Page</h1>
-</header>
+<section class="sidebar">
+    <a href="#" class="logo">
+        <i class="fab fa-slack"></i>
+        <span class="text">Admin Panel</span>
+    </a>
 
-<!-- Wybór surowca -->
-<div class="commodity-selection">
-    <ul>
-        <li th:each="type : ${commodityTypes}">
-            <a th:href="@{'/' + ${type}}" th:class="${type == selectedCommodity.commodityType} ? 'selected' : ''"
-               th:text="${type}"></a>
+    <ul class="side-menu top">
+        <li th:each="commodity : ${commodityTypes}" th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
+            <a th:href="@{'/' + ${commodity}}" class="nav-link">
+                <span th:text="${commodity}"></span>
+            </a>
         </li>
     </ul>
-</div>
-<div class="content">
-    <div class="commodity-info">
+
+
+    <ul class="side-menu">
+        <li>
+            <a href="#">
+                <i class="fas fa-cog"></i>
+                <span class="text">Settings</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" class="logout">
+                <i class="fas fa-right-from-bracket"></i>
+                <span class="text">Logout</span>
+            </a>
+        </li>
+    </ul>
+</section>
+<section class="content">
+    <nav>
+        <a href="#" class="nav-link">Categories</a>
+        <form action="#">
+            <div class="form-input">
+                <input type="search" placeholder="search..." />
+                <button class="search-btn">
+                </button>
+            </div>
+        </form>
+
+        <input type="checkbox" hidden id="switch-mode" />
+        <label for="switch-mode" class="switch-mode"></label>
+
+        <a href="#" class="notification">
+            <i class="fas fa-bell"></i>
+            <span class="num">28</span>
+        </a>
+
+        <a href="#" class="profile">
+            <img src="profile.png" alt="" />
+        </a>
+    </nav>
+    <main>
+            <h1>Dashboard</h1>
         <div class="commodity-details">
             <h3 th:text="${selectedCommodity.name}">Nazwa surowca</h3>
             <p th:text="${'Typ surowca: ' + selectedCommodity.commodityType}"></p>
             <p th:text="${'Interwał: ' + selectedCommodity.interval_column}"></p>
             <p th:text="${'Jednostka: ' + selectedCommodity.unit}"></p>
 
-            <h4>Dane z data_point:</h4>
-            <!-- Dodaj linki do zakładek -->
             <ul>
-                <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/data'}">Czyste dane</a></li>
-                <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/testadf'}">Test ADF</a></li>
+                <li><a th:href="@{'/' + ${selectedCommodity.commodityType}}">Data</a></li>
                 <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}">Forecasts</a></li>
             </ul>
         </div>
+        <table>
+            <thead>
+            <tr>
+                <th>Commodity ID</th>
+                <th>ADF Statistic</th>
+                <th>P-Value</th>
+                <th>Critical Value 1%</th>
+                <th>Critical Value 5%</th>
+                <th>Critical Value 10%</th>
+                <th>Is Stationary</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="adfResult : ${adfResults}">
+                <td th:text="${adfResult.commodityId}"></td>
+                <td th:text="${adfResult.adfStatistic}"></td>
+                <td th:text="${adfResult.pValue}"></td>
+                <td th:text="${adfResult.criticalValue1Percent}"></td>
+                <td th:text="${adfResult.criticalValue5Percent}"></td>
+                <td th:text="${adfResult.criticalValue10Percent}"></td>
+                <td th:text="${adfResult.isStationary}"></td>
+            </tr>
+            </tbody>
+        </table>
 
 
-<table>
-    <thead>
-    <tr>
-        <th>adfStatistic</th>
-        <th>pValue</th>
-        <th>criticalValue1Percent</th>
-        <th>criticalValue5Percent</th>
-        <th>criticalValue10Percent</th>
-        <th>isStationary</th>
-        <!-- Dodaj inne kolumny, takie jak critical values, is stationary itp. -->
-    </tr>
-    </thead>
-    <tbody>
-    <!-- Iteruj przez wyniki ADF i wyświetl je w tabeli -->
-    <tr th:each="adfResult : ${adfResults}">
-        <td th:text="${adfResult.adfStatistic}"></td>
-        <td th:text="${adfResult.pValue}"></td>
-        <td th:text="${adfResult.criticalValue1Percent}"></td>
-        <td th:text="${adfResult.criticalValue5Percent}"></td>
-        <td th:text="${adfResult.criticalValue10Percent}"></td>
-        <td th:text="${adfResult.isStationary}"></td>
-    </tr>
-    </tbody>
-</table>
-</div>
+    </main>
+
+</section>
+
+
+<script src="app.js"></script>
 </body>
+
 </html>

@@ -10,35 +10,74 @@
 
 <body>
 
-<!-- Header -->
-<header>
-    <h1>Commodity Page</h1>
-</header>
+<section class="sidebar">
+    <a href="#" class="logo">
+        <i class="fab fa-slack"></i>
+        <span class="text">Admin Panel</span>
+    </a>
 
-<!-- Wybór surowca -->
-<div class="commodity-selection">
-    <ul>
-        <li th:each="type : ${commodityTypes}">
-            <a th:href="@{'/' + ${type}}" th:class="${type == selectedCommodity.commodityType} ? 'selected' : ''"
-               th:text="${type}"></a>
+    <ul class="side-menu top">
+        <li th:each="commodity : ${commodityTypes}" th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
+            <a th:href="@{'/' + ${commodity}}" class="nav-link">
+                <span th:text="${commodity}"></span>
+            </a>
         </li>
     </ul>
-</div>
 
-<!-- Zawartość strony -->
-<div class="content">
-    <!-- Wyświetlenie danych surowca -->
-    <div class="commodity-info">
+
+    <ul class="side-menu">
+        <li>
+            <a href="#">
+                <i class="fas fa-cog"></i>
+                <span class="text">Settings</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" class="logout">
+                <i class="fas fa-right-from-bracket"></i>
+                <span class="text">Logout</span>
+            </a>
+        </li>
+    </ul>
+</section>
+<section class="content">
+    <nav>
+        <a href="#" class="nav-link">Categories</a>
+        <form action="#">
+            <div class="form-input">
+                <input type="search" placeholder="search..." />
+                <button class="search-btn">
+                </button>
+            </div>
+        </form>
+
+        <input type="checkbox" hidden id="switch-mode" />
+        <label for="switch-mode" class="switch-mode"></label>
+
+        <a href="#" class="notification">
+            <i class="fas fa-bell"></i>
+            <span class="num">28</span>
+        </a>
+
+        <a href="#" class="profile">
+            <img src="profile.png" alt="" />
+        </a>
+    </nav>
+    <main>
+                <h1>Dashboard</h1>
+
+            <a href="#" class="download-btn">
+                <span class="text">Download Report</span>
+            </a>
+        </div>
+
         <div class="commodity-details">
             <h3 th:text="${selectedCommodity.name}">Nazwa surowca</h3>
             <p th:text="${'Typ surowca: ' + selectedCommodity.commodityType}"></p>
             <p th:text="${'Interwał: ' + selectedCommodity.interval_column}"></p>
             <p th:text="${'Jednostka: ' + selectedCommodity.unit}"></p>
 
-            <h4>Dane z data_point:</h4>
-            <!-- Dodaj linki do zakładek -->
             <ul>
-                <li><a th:href="@{'/' + ${selectedCommodity.commodityType}+ '/data'}">Czyste dane</a></li>
                 <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/testadf'}">Test ADF</a></li>
                 <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}">Forecasts</a></li>
             </ul>
@@ -62,11 +101,10 @@
             </div>
         </div>
 
-        <!-- Dodaj rozwijaną listę dla wyboru typu wykresu -->
 
+    </main>
 
-    </div>
-</div>
+</section>
 
 <script th:inline="javascript">
 
@@ -118,7 +156,7 @@
     document.getElementById('startDate').innerText = dates[0];
     document.getElementById('endDate').innerText = dates[dates.length - 1];
 </script>
-
+<script src="app.js"></script>
 </body>
 
 </html>
