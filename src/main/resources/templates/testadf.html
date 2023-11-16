@@ -28,13 +28,11 @@
     <ul class="side-menu">
         <li>
             <a href="#">
-                <i class="fas fa-cog"></i>
                 <span class="text">Settings</span>
             </a>
         </li>
         <li>
             <a href="#" class="logout">
-                <i class="fas fa-right-from-bracket"></i>
                 <span class="text">Logout</span>
             </a>
         </li>
@@ -59,7 +57,7 @@
             <span class="num">28</span>
         </a>
 
-        <a href="#" class="profile">
+        <a href="/static/profile.png" class="profile">
             <img src="profile.png" alt="" />
         </a>
     </nav>
@@ -76,10 +74,18 @@
                 <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}">Forecasts</a></li>
             </ul>
         </div>
+        <div>
+            <h2>Test ADF (Augmented Dickey-Fuller)</h2>
+            <p>
+                Test ADF służy do sprawdzenia, czy szereg czasowy jest stacjonarny. Stacjonarność jest ważnym
+                założeniem wielu modeli prognostycznych. Test ADF ocenia, czy istnieje tendencja (trend) w danych
+                czasowych, co może wpływać na wyniki prognozowania.
+            </p>
+
+        </div>
         <table>
             <thead>
             <tr>
-                <th>Commodity ID</th>
                 <th>ADF Statistic</th>
                 <th>P-Value</th>
                 <th>Critical Value 1%</th>
@@ -90,13 +96,20 @@
             </thead>
             <tbody>
             <tr th:each="adfResult : ${adfResults}">
-                <td th:text="${adfResult.commodityId}"></td>
                 <td th:text="${adfResult.adfStatistic}"></td>
                 <td th:text="${adfResult.pValue}"></td>
                 <td th:text="${adfResult.criticalValue1Percent}"></td>
                 <td th:text="${adfResult.criticalValue5Percent}"></td>
                 <td th:text="${adfResult.criticalValue10Percent}"></td>
                 <td th:text="${adfResult.isStationary}"></td>
+
+                <span th:if="${adfResult.isStationary == 1}">
+                    <strong>Stacjonarny:</strong> Szereg czasowy jest stacjonarny, co może oznaczać, że cena tego surowca jest bardziej stabilna w czasie.
+                </span>
+                    <span th:if="${adfResult.isStationary == 0}">
+                    <strong>Niestacjonarny:</strong> Szereg czasowy jest niestacjonarny, co może oznaczać większą zmienność w cenach tego surowca w czasie.
+                </span>
+
             </tr>
             </tbody>
         </table>
