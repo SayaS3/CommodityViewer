@@ -86,6 +86,20 @@ public class CommodityController {
     @GetMapping("/{commodityType}/forecasts")
     public String getForecastsPage(@PathVariable CommodityType commodityType, Model model) {
         CommodityData selectedCommodity = commodityService.findByType(commodityType).orElse(null);
+        List<String> dates = new ArrayList<>();
+        List<Double> values = new ArrayList<>();
+        List<String> forecastDates = new ArrayList<>();  // Dodaj listę dla dat prognoz
+        List<Double> forecastValues = new ArrayList<>();  // Dodaj listę dla wartości prognoz
+
+        commodityService.findByType(commodityType).ifPresent(commodity -> {
+            model.addAttribute("selectedCommodity", commodity);
+
+            // Uzupełnij listy danymi z data_point
+            for (DataPoint dataPoint : commodity.getData()) {
+                dates.add(dataPoint.getDate());
+                values.add(Double.valueOf(dataPoint.getValue_column()));
+            }
+        });
 
         if (selectedCommodity != null) {
             commodityService.findByType(commodityType).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
@@ -93,9 +107,16 @@ public class CommodityController {
             List<Forecast> forecasts = forecastService.getForecastsByCommodityId(selectedCommodity.getId());
 
             // Konwersja daty na format bez godziny
-            forecasts.forEach(forecast -> forecast.setForecastDate(LocalDate.ofEpochDay(forecast.getForecastDate().toEpochDay())));
+            forecasts.forEach(forecast -> {
+                forecast.setForecastDate(LocalDate.ofEpochDay(forecast.getForecastDate().toEpochDay()));
+                forecastDates.add(forecast.getForecastDate().toString());  // Dodaj daty prognoz do listy
+                forecastValues.add(forecast.getForecastValue());  // Dodaj wartości prognoz do listy
+            });
 
-            // Ustawienie dostępnych typów surowców
+            model.addAttribute("dates", dates);
+            model.addAttribute("values", values);
+            model.addAttribute("forecastDates", forecastDates);  // Dodaj prognozowane daty do modelu
+            model.addAttribute("forecastValues", forecastValues);  // Dodaj prognozowane wartości do modelu
             model.addAttribute("commodityTypes", CommodityType.values());
             model.addAttribute("forecasts", forecasts);
             model.addAttribute("selectedCommodity", selectedCommodity);
@@ -105,6 +126,7 @@ public class CommodityController {
             return "error"; // Przekierowanie na stronę główną lub inny odpowiedni adres
         }
     }
+
 
 
 }

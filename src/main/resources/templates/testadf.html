@@ -12,8 +12,7 @@
 
 <section class="sidebar">
     <a href="#" class="logo">
-        <i class="fab fa-slack"></i>
-        <span class="text">Admin Panel</span>
+        <span class="text">CommodityViewer</span>
     </a>
 
     <ul class="side-menu top">
@@ -64,15 +63,13 @@
     <main>
             <h1>Dashboard</h1>
         <div class="commodity-details">
+            <a th:href="@{'/' + ${selectedCommodity.commodityType}}" class="btn">Data</a>
+            <a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}" class="btn">Przewidywania</a>
             <h3 th:text="${selectedCommodity.name}">Nazwa surowca</h3>
             <p th:text="${'Typ surowca: ' + selectedCommodity.commodityType}"></p>
             <p th:text="${'Interwał: ' + selectedCommodity.interval_column}"></p>
             <p th:text="${'Jednostka: ' + selectedCommodity.unit}"></p>
 
-            <ul>
-                <li><a th:href="@{'/' + ${selectedCommodity.commodityType}}">Data</a></li>
-                <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}">Forecasts</a></li>
-            </ul>
         </div>
         <div>
             <h2>Test ADF (Augmented Dickey-Fuller)</h2>
@@ -103,10 +100,10 @@
                 <td th:text="${adfResult.criticalValue10Percent}"></td>
                 <td th:text="${adfResult.isStationary}"></td>
 
-                <span th:if="${adfResult.isStationary == 1}">
+                <span class="isStationary" th:if="${adfResult.isStationary == 1}">
                     <strong>Stacjonarny:</strong> Szereg czasowy jest stacjonarny, co może oznaczać, że cena tego surowca jest bardziej stabilna w czasie.
                 </span>
-                    <span th:if="${adfResult.isStationary == 0}">
+                    <span class="notStationary" th:if="${adfResult.isStationary == 0}">
                     <strong>Niestacjonarny:</strong> Szereg czasowy jest niestacjonarny, co może oznaczać większą zmienność w cenach tego surowca w czasie.
                 </span>
 

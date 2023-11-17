@@ -12,8 +12,7 @@
 
 <section class="sidebar">
     <a href="#" class="logo">
-        <i class="fab fa-slack"></i>
-        <span class="text">Admin Panel</span>
+        <span class="text">CommodityViewer</span>
     </a>
 
     <ul class="side-menu top">
@@ -62,22 +61,20 @@
         </a>
     </nav>
     <main>
-            <h1>Dashboard</h1>
+       <h1>Dashboard</h1>
+
         <div class="commodity-details">
+            <a th:href="@{'/' + ${selectedCommodity.commodityType}}" class="btn">Data</a>
+            <a th:href="@{'/' + ${selectedCommodity.commodityType} + '/testadf'}" class="btn">Test ADF</a>
             <h3 th:text="${selectedCommodity.name}">Nazwa surowca</h3>
             <p th:text="${'Typ surowca: ' + selectedCommodity.commodityType}"></p>
             <p th:text="${'Interwał: ' + selectedCommodity.interval_column}"></p>
             <p th:text="${'Jednostka: ' + selectedCommodity.unit}"></p>
 
-            <ul>
-                <li><a th:href="@{'/' + ${selectedCommodity.commodityType}}">Data</a></li>
-                <li><a th:href="@{'/' + ${selectedCommodity.commodityType} + '/testadf'}">Test ADF</a></li>
-            </ul>
         </div>
-
+        <div id="myChart"></div>
         <th:block th:if="${#lists.size(forecasts) > 0}">
             <h2>Forecasts for <span th:text="${selectedCommodity.name}"></span></h2>
-
             <table class="table">
                 <thead>
                 <tr>
@@ -106,6 +103,10 @@
 
     let dates = [[${dates}]];
     let values = [[${values}]];
+    let forecastDates = [[${forecastDates}]];  // Dodaj zmienną z datami prognoz
+    let forecastValues = [[${forecastValues}]];
+    let reversedForecastDates = forecastDates.reverse();
+    let reversedForecastValues = forecastValues.reverse();
     let reversedDates = dates.reverse();
     let reversedValues = values.reverse();
 
@@ -118,6 +119,21 @@
         name: 'Cena surowca'
     };
 
+
+    // Dodaj pierwszy punkt prognozy do danych historycznych
+    reversedDates.push(reversedForecastDates[reversedForecastDates.length - 1]);
+    reversedValues.push(reversedForecastValues[reversedForecastValues.length - 1]);
+
+
+
+    let traceForecast = {
+        x: reversedForecastDates,
+        y: reversedForecastValues,
+        type: chartType,
+        mode: 'lines',  // Dodaj mode do połączenia linii z punktami
+        name: 'Holt-Winters Forecast',
+        line: { color: 'red' }  // Dodaj kolor
+    };
     let layout = {
         margin: { t: 0 },
         xaxis: {
@@ -127,23 +143,12 @@
         yaxis: {
             autorange: true,
             type: 'linear'
-        }
+        },
+        legend: { orientation: 'h', y: -0.25 } // Dodaj legendę
     };
 
-    Plotly.newPlot('myChart', [trace], layout);
+    Plotly.newPlot('myChart', [trace, traceForecast], layout);
 
-    // Funkcja do aktualizacji typu wykresu
-    function updateChartType() {
-        chartType = document.getElementById('chartType').value;
-        trace.type = chartType;
-        Plotly.update('myChart', { 'type': chartType });
-    }
-
-    // Dodaj obsługę zdarzeń do obszaru zaznaczenia
-    let selectedArea = {
-        x: [],
-        y: []
-    };
 
     // Uzupełnij statystyki surowca
     document.getElementById('minValue').innerText = Math.min(...values);

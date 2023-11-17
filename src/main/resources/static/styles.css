@@ -25,6 +25,8 @@
   --light-yellow: #fff2c6;
   --orange: #fd7238;
   --light-orange: #ffe0d3;
+  --light-red: red;
+  --light-green: green;
 }
 
 html {
@@ -315,7 +317,7 @@ body.dark {
 
 .content main {
   width: 100%;
-  padding: 36px 24px;
+  padding: 20px 24px;
   font-family: var(--poppins);
   max-height: calc(100vh - 56px);
   overflow-y: auto;
@@ -657,13 +659,32 @@ body.dark {
   padding: 10px;
   border-radius: 5px;
 }
-
-.content main .commodity-details span.stacjonarny {
+.commodity-details {
+  padding-bottom: 15px;
+}
+.commodity-details a{
+  margin-top: 5px;
+}
+.content main .commodity-details span.isStationary {
   background-color: var(--light-green);
   color: green;
 }
 
-.content main .commodity-details span.niestacjonarny {
+.content main .commodity-details span.notStationary{
   background-color: var(--light-red);
   color: red;
+}
+.btn {
+  background-color: #3498db; /* Kolor tła - przykładowy niebieski */
+  color: #fff; /* Kolor tekstu - biały */
+  padding: 5px 15px; /* Wielkość wypełnienia, dostosuj według potrzeb */
+  text-decoration: none; /* Usuń podkreślenie z linku */
+  border-radius: 5px; /* Zaokrąglone rogi */
+  display: inline-block; /* Blokowy element inline, aby można było stosować padding i border */
+  margin-right: 10px;
+}
+
+.btn:hover {
+    background-color: #2980b9; /* Kolor tła po najechaniu myszą - ciemniejszy odcień niebieskiego */
+  transition: .3s;
 }
