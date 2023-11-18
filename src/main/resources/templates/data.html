@@ -56,7 +56,7 @@
         </a>
 
         <a href="#" class="profile">
-            <img src="profile.png" alt=""/>
+            <img src="/profile.png" alt=""/>
         </a>
     </nav>
     <main>
@@ -129,7 +129,7 @@
         }
     };
 
-    Plotly.newPlot('myChart', [trace], layout);
+    Plotly.newPlot('myChart', [trace], layout, {responsive: true});
 
     // Funkcja do aktualizacji typu wykresu
     function updateChartType() {
@@ -160,7 +160,7 @@
     document.getElementById('startDate').innerText = dates[0];
     document.getElementById('endDate').innerText = dates[dates.length - 1];
 </script>
-<script src="app.js"></script>
+<script th:inline="javascript" src="/app.js"></script>
 </body>
 
 </html>

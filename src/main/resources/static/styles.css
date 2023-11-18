@@ -50,7 +50,7 @@ body.dark {
   left: 0;
   background: var(--light);
   height: 100%;
-  width: 280px;
+  width: 216px;
   z-index: 2000;
   font-family: var(--lato);
   transition: 0.3s ease;
@@ -67,6 +67,7 @@ body.dark {
 }
 
 .sidebar .logo {
+  margin-left: 6px;
   font-size: 24px;
   font-weight: 700;
   height: 56px;
@@ -168,8 +169,8 @@ body.dark {
 
 .content {
   position: relative;
-  width: calc(100% - 280px);
-  left: 280px;
+  width: calc(100% - 216px);
+  left: 216px;
   transition: 0.3s ease;
 }
 
@@ -177,6 +178,7 @@ body.dark {
   width: calc(100% - 60px);
   left: 60px;
 }
+
 
 .content nav {
   height: 56px;
@@ -564,63 +566,6 @@ body.dark {
   border-radius: 5rem;
 }
 
-@media (max-width: 768px) {
-  .sidebar {
-    width: 200px;
-  }
-
-  .content {
-    width: calc(100% - 200px);
-    left: 200px;
-  }
-
-  .content nav .nav-link {
-    display: none;
-  }
-}
-
-@media (max-width: 576px) {
-  .content nav form .form-input input {
-    display: none;
-  }
-
-  .content nav form .form-input button {
-    width: auto;
-    height: auto;
-    background: transparent;
-    color: var(--dark);
-  }
-
-  .content nav form.show .form-input input {
-    display: block;
-    width: 100%;
-  }
-
-  .content nav form.show .form-input button {
-    width: 36px;
-    height: 36px;
-    border-radius: 0 36px 36px 0;
-    color: var(--light);
-    background: var(--red);
-  }
-
-  .content nav form.show ~ .notification,
-  .content nav form.show ~ .profile {
-    display: none;
-  }
-
-  .content main .table-data .head {
-    min-width: 420px;
-  }
-
-  .content main .table-data .order table {
-    min-width: 420px;
-  }
-
-  .content main .table-data .todo .todo-list {
-    min-width: 420px;
-  }
-}
 .content main table {
   width: 100%;
   margin-top: 20px;
@@ -688,3 +633,18 @@ body.dark {
     background-color: #2980b9; /* Kolor tła po najechaniu myszą - ciemniejszy odcień niebieskiego */
   transition: .3s;
 }
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .content {
+    width: calc(100% - 200px);
+    left: 200px;
+  }
+
+  .content nav .nav-link {
+    display: none;
+  }
+}
+

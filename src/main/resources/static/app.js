@@ -10,11 +10,7 @@ sideMenu.forEach((item) => {
   });
 });
 
-let menuBar = document.querySelector(".menu-btn");
 let sideBar = document.querySelector(".sidebar");
-menuBar.addEventListener("click", () => {
-  sideBar.classList.toggle("hide");
-});
 
 let switchMode = document.getElementById("switch-mode");
 switchMode.addEventListener("change", (e) => {
@@ -42,8 +38,8 @@ searchBtn.addEventListener("click", (e) => {
 
 window.addEventListener("resize", () => {
   if (window.innerWidth > 576) {
-    searchIcon.classList.replace("fa-times", "fa-search");
-    searchFrom.classList.remove("show");
+    searchFrom.classList.remove("hide");
+    sideBar.classList.remove("hide"); // Usuń klasę "hide"
   }
   if (window.innerWidth < 768) {
     sideBar.classList.add("hide");
