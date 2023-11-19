@@ -360,8 +360,9 @@ body.dark {
   pointer-events: unset;
 }
 
-.content main .head-title .download-btn {
+.content main .download-btn {
   height: 36px;
+  width: 180px;
   padding: 0 16px;
   border-radius: 36px;
   background: var(--blue);
@@ -608,6 +609,8 @@ body.dark {
   padding-bottom: 15px;
 }
 .commodity-details a{
+  background: var(--blue);
+  color: var(--light);
   margin-top: 5px;
 }
 .content main .commodity-details span.isStationary {

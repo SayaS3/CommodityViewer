@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.Commodity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;

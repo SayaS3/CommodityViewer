@@ -122,14 +122,7 @@ def holt_winters_forecast(series):
         # Pobierz ostatnią dostępną datę
         last_date = series.index[-1]
 
-        # Sprawdź różnicę między dwiema ostatnimi datami
-        date_diff = series.index[-1] - series.index[-2]
-
-        # Utwórz zakres dat na kolejne 12 dni/miesięcy
-        if date_diff.days < 28:  # Jeśli dane są dzienne
-            date_range = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=12, freq='D')
-        else:  # Jeśli dane są miesięczne
-            date_range = pd.date_range(start=last_date + pd.offsets.MonthBegin(1), periods=12, freq='MS')
+        date_range = pd.date_range(start=last_date + pd.offsets.MonthBegin(1), periods=12, freq='MS')
 
         # Ustaw zakres dat jako indeks dla prognozy
         forecast.index = date_range
@@ -156,20 +149,6 @@ for commodity_id in df_commodity_data[df_commodity_data['interval_column'] == 'm
     # Zapisz nowe prognozy
     save_forecast_to_db(commodity_id, forecast)
 
-# Wykonaj test ADF i prognozowanie dla surowców z danymi dziennymi
-for commodity_id in df_commodity_data[df_commodity_data['interval_column'] == 'daily']['id']:
-
-    series = df_data_point[df_data_point['commodity_id'] == commodity_id]['value_column']
-    # Usuń poprzednie wyniki dla tego surowca
-    delete_previous_adf_results(commodity_id)
-    adf_test(series, commodity_id)
-
-    # Usuń stare prognozy
-    delete_previous_forecasts(commodity_id)
-
-    forecast = holt_winters_forecast(series)
-    # Zapisz nowe prognozy
-    save_forecast_to_db(commodity_id, forecast)
 
 # Zamknięcie połączenia z bazą danych
 conn.close()

@@ -1,17 +1,43 @@
-package com.example.demo;
+package com.example.demo.Commodity;
+
+import jakarta.persistence.*;
 
 
 import java.util.List;
 
-public class Commodity {
+@Entity
+public class CommodityData {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(unique=true)
+    private CommodityType commodityType;
     private String name;
-    private String COMMODITY_TYPE;
     private String interval_column;
     private String unit;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "commodity_id")
     private List<DataPoint> data;
 
+    public CommodityData() {
+    }
+    public Long getId() {
+        return id;
+    }
 
-    public Commodity() {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public CommodityType getCommodityType() {
+        return commodityType;
+    }
+
+    public void setCommodityType(CommodityType commodityType) {
+        this.commodityType = commodityType;
     }
 
     public String getName() {
@@ -45,13 +71,4 @@ public class Commodity {
     public void setData(List<DataPoint> data) {
         this.data = data;
     }
-
-    public String getCOMMODITY_TYPE() {
-        return COMMODITY_TYPE;
-    }
-
-    public void setCOMMODITY_TYPE(String COMMODITY_TYPE) {
-        this.COMMODITY_TYPE = COMMODITY_TYPE;
-    }
 }
-

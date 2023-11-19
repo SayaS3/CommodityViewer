@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.Commodity;
 
 import com.example.demo.ADF.AdfResult;
 import com.example.demo.ADF.AdfResultService;

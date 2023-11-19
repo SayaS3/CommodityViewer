@@ -1,6 +1,8 @@
 package com.example.demo;
 
 
+import com.example.demo.Commodity.Commodity;
+import com.example.demo.Commodity.CommodityType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

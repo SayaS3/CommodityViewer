@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.Commodity.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 

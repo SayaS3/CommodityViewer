@@ -1,21 +1,17 @@
-package com.example.demo;
+package com.example.demo.Commodity;
 
-import com.example.demo.Commodity.DataPoint;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class ApiResponse {
-    @JsonProperty("name")
+public class Commodity {
     private String name;
-    @JsonProperty("interval")
+    private String COMMODITY_TYPE;
     private String interval_column;
-    @JsonProperty("unit")
     private String unit;
-    @JsonProperty("data")
     private List<DataPoint> data;
 
-    public ApiResponse() {
+
+    public Commodity() {
     }
 
     public String getName() {
@@ -48,6 +44,14 @@ public class ApiResponse {
 
     public void setData(List<DataPoint> data) {
         this.data = data;
+    }
+
+    public String getCOMMODITY_TYPE() {
+        return COMMODITY_TYPE;
+    }
+
+    public void setCOMMODITY_TYPE(String COMMODITY_TYPE) {
+        this.COMMODITY_TYPE = COMMODITY_TYPE;
     }
 }
 
