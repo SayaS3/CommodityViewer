@@ -58,7 +58,12 @@
         </a>
     </nav>
     <main>
+        <div class="top-main">
             <h1>Dashboard</h1>
+            <a href="#" class="download-btn">
+                <span class="text">Pobierz raport</span>
+            </a>
+        </div>
         <div class="commodity-details">
             <a th:href="@{'/' + ${selectedCommodity.commodityType}}" class="btn">Data</a>
             <a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}" class="btn">Przewidywania</a>

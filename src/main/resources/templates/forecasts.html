@@ -57,7 +57,12 @@
         </a>
     </nav>
     <main>
-       <h1>Dashboard</h1>
+        <div class="top-main">
+            <h1>Dashboard</h1>
+            <a href="#" class="download-btn">
+                <span class="text">Pobierz raport</span>
+            </a>
+        </div>
 
         <div class="commodity-details">
             <a th:href="@{'/' + ${selectedCommodity.commodityType}}" class="btn">Data</a>
@@ -68,6 +73,17 @@
             <p th:text="${'Jednostka: ' + selectedCommodity.unit}"></p>
 
         </div>
+        <div class="holt-description">
+            <p>
+                Model prognozowania: Holt-Winters Forecast. Jest to zaawansowany model szeregów czasowych, wykorzystywany
+                do prognozowania przyszłych cen surowców na podstawie ich historycznych danych. Model ten integruje trzy
+                składowe: poziom (level), trend i sezonowość.
+                Składowa poziomu odzwierciedla średnią wartość surowca, trend prognozuje kierunek i nachylenie zmian cen,
+                natomiast składowa sezonowości uwzględnia cykliczne wzorce, które mogą występować w określonych okresach czasu,
+                na przykład sezonowość roczna lub kwartalna
+            </p>
+        </div>
+
         <div id="myChart"></div>
         <th:block th:if="${#lists.size(forecasts) > 0}">
             <h2>Forecasts for <span th:text="${selectedCommodity.name}"></span></h2>

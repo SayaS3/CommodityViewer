@@ -12,15 +12,28 @@ sideMenu.forEach((item) => {
 
 let sideBar = document.querySelector(".sidebar");
 
-let switchMode = document.getElementById("switch-mode");
+document.addEventListener("DOMContentLoaded", () => {
+  const switchMode = document.getElementById("switch-mode");
 
-switchMode.addEventListener("change", (e) => {
-  if (e.target.checked) {
-    document.body.classList.add("dark");
-  } else {
-    document.body.classList.remove("dark");
+  if (switchMode) {
+    const setSwitchModeState = () => {
+      const isChecked = localStorage.getItem("switchModeChecked") === "true";
+      switchMode.checked = isChecked;
+      document.body.classList.toggle("dark", isChecked);
+    };
+
+    const handleSwitchModeChange = () => {
+      localStorage.setItem("switchModeChecked", switchMode.checked);
+      document.body.classList.toggle("dark", switchMode.checked);
+    };
+
+    setSwitchModeState();
+
+    switchMode.addEventListener("change", handleSwitchModeChange);
+    window.addEventListener("beforeunload", handleSwitchModeChange);
   }
 });
+
 
 
 let searchFrom = document.querySelector(".content nav form");
@@ -51,3 +64,7 @@ window.addEventListener("resize", () => {
 if (window.innerWidth < 768) {
   sideBar.classList.add("hide");
 }
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelector('.sidebar').style.visibility='visible';
+  document.querySelector('.content').style.visibility='visible';
+});

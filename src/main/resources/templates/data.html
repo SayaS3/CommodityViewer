@@ -8,10 +8,10 @@
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 </head>
 
-<body>
+
 
 <section class="sidebar">
-    <a href="#" class="logo">
+    <a href="/" class="logo">
         <span class="text">CommodityViewer</span>
     </a>
 
@@ -23,7 +23,6 @@
             </a>
         </li>
     </ul>
-
 
     <ul class="side-menu">
         <li>
@@ -58,13 +57,12 @@
         </a>
     </nav>
     <main>
-        <h1>Dashboard</h1>
-
-        <a href="#" class="download-btn">
-
-            <span class="text">Download Report</span>
-        </a>
-
+        <div class="top-main">
+            <h1>Dashboard</h1>
+            <a href="#" class="download-btn">
+                <span class="text">Pobierz raport</span>
+            </a>
+        </div>
 
         <div class="commodity-details">
             <a th:href="@{'/' + ${selectedCommodity.commodityType} + '/testadf'}" class="btn">Test ADF</a>
@@ -159,7 +157,8 @@
     document.getElementById('startDate').innerText = dates[0];
     document.getElementById('endDate').innerText = dates[dates.length - 1];
 </script>
-<script th:inline="javascript" src="/app.js"></script>
+<script src="/app.js"></script>
+
 </body>
 
 </html>
