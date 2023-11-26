@@ -16,9 +16,10 @@
     </a>
 
     <ul class="side-menu top">
-        <li th:each="commodity : ${commodityTypes}" th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
+        <li th:each="commodity : ${commodityTypes}"
+            th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
             <a th:href="@{'/' + ${commodity}}" class="nav-link">
-                <span th:text="${commodity}"></span>
+                <span th:text="${commodity == 'COPPER' ? 'Miedź' : (commodity == 'NATURAL_GAS' ? 'Gaz Ziemny' : (commodity == 'WHEAT' ? 'Zboże' : (commodity == 'BRENT' ? 'Ropa' : (commodity == 'ALUMINUM' ? 'Aluminium' : commodity))))}"></span>
             </a>
         </li>
     </ul>
@@ -27,12 +28,12 @@
     <ul class="side-menu">
         <li>
             <a href="#">
-                <span class="text">Settings</span>
+                <span class="text">Ustawienia</span>
             </a>
         </li>
         <li>
             <a href="#" class="logout">
-                <span class="text">Logout</span>
+                <span class="text">Wyloguj</span>
             </a>
         </li>
     </ul>
@@ -58,19 +59,31 @@
     </nav>
     <main>
         <div class="top-main">
-            <h1>Dashboard</h1>
+            <h1>Panel</h1>
             <a href="#" class="download-btn">
                 <span class="text">Pobierz raport</span>
             </a>
         </div>
 
         <div class="commodity-details">
-            <a th:href="@{'/' + ${selectedCommodity.commodityType}}" class="btn">Data</a>
+            <a th:href="@{'/' + ${selectedCommodity.commodityType}}" class="btn">Dane</a>
             <a th:href="@{'/' + ${selectedCommodity.commodityType} + '/testadf'}" class="btn">Test ADF</a>
             <h3 th:text="${selectedCommodity.name}">Nazwa surowca</h3>
-            <p th:text="${'Typ surowca: ' + selectedCommodity.commodityType}"></p>
-            <p th:text="${'Interwał: ' + selectedCommodity.interval_column}"></p>
-            <p th:text="${'Jednostka: ' + selectedCommodity.unit}"></p>
+            <p th:text="${'Typ Surowca: ' +
+    (selectedCommodity.commodityType == 'COPPER' ? 'Miedź' :
+    (selectedCommodity.commodityType == 'NATURAL_GAS' ? 'Gaz Ziemny' :
+    (selectedCommodity.commodityType == 'WHEAT' ? 'Zboże' :
+    (selectedCommodity.commodityType == 'BRENT' ? 'Ropa' :
+    (selectedCommodity.commodityType == 'ALUMINIUM' ? 'Aluminium' :
+    selectedCommodity.commodityType)))))}"></p>
+
+            <p th:text="${'Interwał: miesięczny'}"></p>
+
+            <p th:text="${'Jednostka: ' +
+    (selectedCommodity.unit == 'dollar per metric ton' ? 'dolar za tonę metryczną' :
+    (selectedCommodity.unit == 'dollars per million BTU' ? 'dolary za milion jednostek cieplnych' :
+    (selectedCommodity.unit == 'dollars per barrel' ? 'dolary za 1 baryłkę' :
+    selectedCommodity.unit)))}"></p>
 
         </div>
         <div class="holt-description">
@@ -86,7 +99,7 @@
 
         <div id="myChart"></div>
         <th:block th:if="${#lists.size(forecasts) > 0}">
-            <h2>Forecasts for <span th:text="${selectedCommodity.name}"></span></h2>
+
             <table class="table">
                 <thead>
                 <tr>

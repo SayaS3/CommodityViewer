@@ -85,7 +85,12 @@ public class CommodityController {
 
     @GetMapping("/{commodityType}/forecasts")
     public String getForecastsPage(@PathVariable CommodityType commodityType, Model model) {
+        List<String> commodityTypes = Arrays.asList("COPPER", "ALUMINUM", "WHEAT", "NATURAL_GAS", "BRENT");
+
+        commodityService.findByType(commodityType).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
+
         CommodityData selectedCommodity = commodityService.findByType(commodityType).orElse(null);
+
         List<String> dates = new ArrayList<>();
         List<Double> values = new ArrayList<>();
         List<String> forecastDates = new ArrayList<>();  // Dodaj listę dla dat prognoz
@@ -112,7 +117,6 @@ public class CommodityController {
                 forecastDates.add(forecast.getForecastDate().toString());  // Dodaj daty prognoz do listy
                 forecastValues.add(forecast.getForecastValue());  // Dodaj wartości prognoz do listy
             });
-
             model.addAttribute("dates", dates);
             model.addAttribute("values", values);
             model.addAttribute("forecastDates", forecastDates);  // Dodaj prognozowane daty do modelu
@@ -120,9 +124,9 @@ public class CommodityController {
             model.addAttribute("commodityTypes", CommodityType.values());
             model.addAttribute("forecasts", forecasts);
             model.addAttribute("selectedCommodity", selectedCommodity);
+            model.addAttribute("commodityTypes", commodityTypes);
             return "forecasts";
         } else {
-            // Obsługa sytuacji, gdy nie znaleziono wybranego surowca
             return "error"; // Przekierowanie na stronę główną lub inny odpowiedni adres
         }
     }

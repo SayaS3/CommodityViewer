@@ -3,12 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Commodity Page</title>
+    <title>Strona Surowców</title>
     <link rel="stylesheet" type="text/css" href="/styles.css">
     <script src="https://code.highcharts.com/highcharts.js"></script>
 </head>
-
-
 
 <section class="sidebar">
     <a href="/" class="logo">
@@ -16,23 +14,25 @@
     </a>
 
     <ul class="side-menu top">
-        <li th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''"
-            th:each="commodity : ${commodityTypes}">
+        <li th:each="commodity : ${commodityTypes}"
+            th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
             <a th:href="@{'/' + ${commodity}}" class="nav-link">
-                <span th:text="${commodity}"></span>
+                <span th:text="${commodity == 'COPPER' ? 'Miedź' : (commodity == 'NATURAL_GAS' ? 'Gaz Ziemny' : (commodity == 'WHEAT' ? 'Zboże' : (commodity == 'BRENT' ? 'Ropa' : (commodity == 'ALUMINUM' ? 'Aluminium' : commodity))))}"></span>
             </a>
         </li>
     </ul>
 
+
+
     <ul class="side-menu">
         <li>
             <a href="#">
-                <span class="text">Settings</span>
+                <span class="text">Ustawienia</span>
             </a>
         </li>
         <li>
             <a href="#" class="logout">
-                <span class="text">Logout</span>
+                <span class="text">Wyloguj</span>
             </a>
         </li>
     </ul>
@@ -41,7 +41,7 @@
     <nav>
         <form action="#">
             <div class="form-input">
-                <input type="search" placeholder="search..."/>
+                <input type="search" placeholder="szukaj..."/>
                 <button class="search-btn">
                 </button>
             </div>
@@ -50,15 +50,13 @@
         <input type="checkbox" hidden id="switch-mode"/>
         <label for="switch-mode" class="switch-mode"></label>
 
-
-
         <a href="#" class="profile">
             <img src="/profile.png" alt=""/>
         </a>
     </nav>
     <main>
         <div class="top-main">
-            <h1>Dashboard</h1>
+            <h1>Panel</h1>
             <a href="#" class="download-btn">
                 <span class="text">Pobierz raport</span>
             </a>
@@ -66,13 +64,23 @@
 
         <div class="commodity-details">
             <a th:href="@{'/' + ${selectedCommodity.commodityType} + '/testadf'}" class="btn">Test ADF</a>
-            <a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}" class="btn">Przewidywania</a>
-            <h3 th:text="${selectedCommodity.name}">Nazwa surowca</h3>
-            <p th:text="${'Typ surowca: ' + selectedCommodity.commodityType}"></p>
-            <p th:text="${'Interwał: ' + selectedCommodity.interval_column}"></p>
-            <p th:text="${'Jednostka: ' + selectedCommodity.unit}"></p>
+            <a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}" class="btn">Prognozy</a>
+            <h3 th:text="${selectedCommodity.name}">Nazwa Surowca</h3>
+            <p th:text="${'Typ Surowca: ' +
+    (selectedCommodity.commodityType == 'COPPER' ? 'Miedź' :
+    (selectedCommodity.commodityType == 'NATURAL_GAS' ? 'Gaz Ziemny' :
+    (selectedCommodity.commodityType == 'WHEAT' ? 'Zboże' :
+    (selectedCommodity.commodityType == 'BRENT' ? 'Ropa' :
+    (selectedCommodity.commodityType == 'ALUMINIUM' ? 'Aluminium' :
+    selectedCommodity.commodityType)))))}"></p>
 
+            <p th:text="${'Interwał: miesięczny'}"></p>
 
+            <p th:text="${'Jednostka: ' +
+    (selectedCommodity.unit == 'dollar per metric ton' ? 'dolar za tonę metryczną' :
+    (selectedCommodity.unit == 'dollars per million BTU' ? 'dolary za milion jednostek cieplnych' :
+    (selectedCommodity.unit == 'dollars per barrel' ? 'dolary za 1 baryłkę' :
+    selectedCommodity.unit)))}"></p>
         </div>
         <div class="chart-and-stats">
             <div id="myChart"></div>
@@ -84,7 +92,7 @@
                         <option value="bar">Słupkowy</option>
                     </select>
                 </div>
-                <h4>Statystyki surowca:</h4>
+                <h4>Statystyki Surowca:</h4>
                 <p>Minimum: <span id="minValue"></span> <span id="minDate"></span></p>
                 <p>Maksimum: <span id="maxValue"></span> <span id="maxDate"></span></p>
                 <p>Średnia: <span id="avgValue"></span></p>
@@ -92,10 +100,7 @@
                 <p>Data końcowa: <span id="endDate"></span></p>
             </div>
         </div>
-
-
     </main>
-
 </section>
 
 <script th:inline="javascript">
