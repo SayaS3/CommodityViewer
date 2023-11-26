@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Commodity Page</title>
     <link rel="stylesheet" type="text/css" href="/styles.css">
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
 </head>
 
 <body>
@@ -112,55 +112,109 @@
 </section>
 
 <script th:inline="javascript">
-
-    let dates = [[${dates}]];
-    let values = [[${values}]];
-    let forecastDates = [[${forecastDates}]];  // Dodaj zmienną z datami prognoz
+    let forecastDates = [[${forecastDates}]];
     let forecastValues = [[${forecastValues}]];
     let reversedForecastDates = forecastDates.reverse();
     let reversedForecastValues = forecastValues.reverse();
-    let reversedDates = dates.reverse();
-    let reversedValues = values.reverse();
+    let dates = [[${dates}]];
+    let values = [[${values}]];
+    var reversedDates = dates.slice().reverse();
+    var reversedValues = values.slice().reverse();
+    let combinedDates = reversedDates.concat(reversedForecastDates);
+    let combinedValues = reversedValues.concat(reversedForecastValues);
+    // Połącz daty i wartości dla prognoz w jedną tablicę
+    let reversedForecastData = forecastDates.map((date, index) => [date, forecastValues[index]]).reverse();
 
-    let chartType = 'line'; // Domyślny typ wykresu
+    // Połącz daty i wartości historyczne w jedną tablicę
+    let reversedHistoricalData = dates.map((date, index) => [date, values[index]]).reverse();
 
-    let trace = {
-        x: reversedDates,
-        y: reversedValues,
-        type: chartType,
-        name: 'Cena surowca'
-    };
+    Highcharts.setOptions({
+        lang: {
+            decimalPoint: ','
+        }
+    });
 
-
-    // Dodaj pierwszy punkt prognozy do danych historycznych
-    reversedDates.push(reversedForecastDates[reversedForecastDates.length - 1]);
-    reversedValues.push(reversedForecastValues[reversedForecastValues.length - 1]);
-
-
-
-    let traceForecast = {
-        x: reversedForecastDates,
-        y: reversedForecastValues,
-        type: chartType,
-        mode: 'lines',  // Dodaj mode do połączenia linii z punktami
-        name: 'Holt-Winters Forecast',
-        line: { color: 'red' }  // Dodaj kolor
-    };
-    let layout = {
-        margin: { t: 0 },
-        xaxis: {
-            rangeslider: { visible: false },
-            type: 'date'
+    // Konfiguracja wykresu Highcharts
+    Highcharts.chart('myChart', {
+        chart: {
+            type: 'line',
+            zoomType: 'x'
         },
-        yaxis: {
-            autorange: true,
-            type: 'linear'
+        title: {
+            text: '' // Ustaw pusty string jako tytuł
         },
-        legend: { orientation: 'h', y: -0.25 } // Dodaj legendę
-    };
+        xAxis: {
+            categories: combinedDates,
+            title: {
+                text: 'Data'
+            },
+            labels: {
+                step: Math.ceil(combinedDates.length / 10) // Krok etykiet osi X
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Cena surowca'
+            },
+            labels: {
+                format: '{value:,.2f}',
+                decimalPoint: ',' // Formatowanie etykiet osi Y
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            headerFormat: '<b>{point.x}</b><br>',
+            pointFormat: 'Cena surowca: {point.y:,.2f}',
+            valueDecimals: 2,
+            decimalPoint: ','
+        },
+        plotOptions: {
+            line: {
+                marker: {
+                    enabled: false // Wyłączenie punktów na wykresie
+                }
+            }
+        },
+        series: [
 
-    Plotly.newPlot('myChart', [trace, traceForecast], layout,{responsive: true});
-
+            {
+                name: 'Holt-Winters',
+                data: combinedValues,
+                color: 'red' // Kolor dla danych prognozowanych
+            },
+            {
+                name: 'Cena surowca',
+                data: reversedValues
+            }
+        ],
+        boost: {
+            useGPUTranslations: true
+        },
+        exporting: {
+            enabled: true
+        },
+        legend: {
+            enabled: true // Włącz legendę
+        },
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    legend: {
+                        layout: 'horizontal',
+                        align: 'center',
+                        verticalAlign: 'bottom'
+                    }
+                }
+            }]
+        }
+    });
 </script>
 <script th:inline="javascript" src="/app.js"></script>
 </body>

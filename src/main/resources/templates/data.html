@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Commodity Page</title>
     <link rel="stylesheet" type="text/css" href="/styles.css">
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
 </head>
 
 
@@ -102,44 +102,89 @@
 
     let dates = [[${dates}]];
     let values = [[${values}]];
-    let reversedDates = dates.reverse();
-    let reversedValues = values.reverse();
-
-    let chartType = 'line'; // Domyślny typ wykresu
-
-    let trace = {
-        x: reversedDates,
-        y: reversedValues,
-        type: chartType,
-        name: 'Cena surowca'
-    };
-
-    let layout = {
-        margin: {t: 0},
-        xaxis: {
-            rangeslider: {visible: false},
-            type: 'date'
-        },
-        yaxis: {
-            autorange: true,
-            type: 'linear'
+    var reversedDates = dates.slice().reverse();
+    var reversedValues = values.slice().reverse();
+    Highcharts.setOptions({
+        lang: {
+            decimalPoint: ','
         }
-    };
+    });
 
-    Plotly.newPlot('myChart', [trace], layout, {responsive: true});
+    // Konfiguracja wykresu Highcharts
+    Highcharts.chart('myChart', {
+        chart: {
+            type: 'line',
+            zoomType: 'x'
+        },
+        title: {
+            text: '' // Ustaw pusty string jako tytuł
+        },
+        xAxis: {
+            categories: reversedDates,
+            title: {
+                text: 'Data'
+            },
+            labels: {
+                step: Math.ceil(reversedDates.length / 10) // Krok etykiet osi X
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Cena surowca'
+            },
+            labels: {
+                format: '{value:,.2f}',
+                decimalPoint: ','// Formatowanie etykiet osi Y
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            headerFormat: '<b>{point.x}</b><br>',
+            pointFormat: 'Cena surowca: {point.y:,.2f}',
+            valueDecimals: 2,
+            decimalPoint: ','
+        },
+        plotOptions: {
+            line: {
+                marker: {
+                    enabled: false // Wyłączenie punktów na wykresie
+                }
+            }
+        },
+        series: [{
+            name: 'Cena surowca',
+            data: reversedValues
+        }],
+        boost: {
+            useGPUTranslations: true
+        },
+        exporting: {
+            enabled: true
+        },
+        legend: {
+            enabled: false // Wyłączenie legendy
+        },
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    legend: {
+                        layout: 'horizontal',
+                        align: 'center',
+                        verticalAlign: 'bottom'
+                    }
+                }
+            }]
+        }
+    });
 
-    // Funkcja do aktualizacji typu wykresu
-    function updateChartType() {
-        chartType = document.getElementById('chartType').value;
-        trace.type = chartType;
-        Plotly.update('myChart', {'type': chartType});
-    }
 
-    // Dodaj obsługę zdarzeń do obszaru zaznaczenia
-    let selectedArea = {
-        x: [],
-        y: []
-    };
     let minValue = Math.min(...reversedValues);
     let minIndex = reversedValues.indexOf(minValue);
     let minDate = reversedDates[minIndex];
@@ -148,14 +193,16 @@
     let maxIndex = reversedValues.indexOf(maxValue);
     let maxDate = reversedDates[maxIndex];
 
-    document.getElementById('minValue').innerText = minValue.toFixed(2);
-    document.getElementById('minDate').innerText = `(${minDate})`;
+    document.getElementById('minValue').innerText = minValue.toFixed(2).replace('.', ',');
+    document.getElementById('minDate').innerText = `(${minDate.replace('.', ',')})`;
 
-    document.getElementById('maxValue').innerText = maxValue.toFixed(2);
-    document.getElementById('maxDate').innerText = `(${maxDate})`;
-    document.getElementById('avgValue').innerText = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2);
-    document.getElementById('startDate').innerText = dates[0];
-    document.getElementById('endDate').innerText = dates[dates.length - 1];
+    document.getElementById('maxValue').innerText = maxValue.toFixed(2).replace('.', ',');
+    document.getElementById('maxDate').innerText = `(${maxDate.replace('.', ',')})`;
+
+    document.getElementById('avgValue').innerText = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2).replace('.', ',');
+    document.getElementById('startDate').innerText = dates[0].replace('.', ',');
+    document.getElementById('endDate').innerText = dates[dates.length - 1].replace('.', ',');
+
 </script>
 <script src="/app.js"></script>
 
