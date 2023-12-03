@@ -6,6 +6,11 @@
     <title>Strona Surowców</title>
     <link rel="stylesheet" type="text/css" href="/styles.css">
     <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/stock.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+
 </head>
 
 <section class="sidebar">
@@ -13,11 +18,19 @@
         <span class="text">CommodityViewer</span>
     </a>
 
+
     <ul class="side-menu top">
         <li th:each="commodity : ${commodityTypes}"
             th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
             <a th:href="@{'/' + ${commodity}}" class="nav-link">
-                <span th:text="${commodity == 'COPPER' ? 'Miedź' : (commodity == 'NATURAL_GAS' ? 'Gaz Ziemny' : (commodity == 'WHEAT' ? 'Zboże' : (commodity == 'BRENT' ? 'Ropa' : (commodity == 'ALUMINUM' ? 'Aluminium' : commodity))))}"></span>
+                <span th:text="${commodity == 'MIEDZ' ? 'Miedź' :
+                (commodity == 'ROPA' ? 'Ropa' :
+                 (commodity == 'SREBRO' ? 'Srebro' :(commodity == 'PLATYNA' ? 'Platyna' :
+                 (commodity == 'NIKIEL' ? 'Nikiel' :(commodity == 'CUKIER' ? 'Cukier' :
+                 (commodity == 'SOJA' ? 'Soja' : (commodity == 'PALLAD' ? 'Pallad' :
+                 (commodity == 'RZEPAK' ? 'Rzepak' : (commodity == 'KAWA' ? 'Kawa' :
+                 (commodity == 'PSZENICA' ? 'Pszenica' : (commodity == 'ZLOTO' ? 'Złoto' :
+                 (commodity == 'ALUMINIUM' ? 'Aluminium' : commodity))))))))))))}"></span>
             </a>
         </li>
     </ul>
@@ -63,150 +76,179 @@
         </div>
 
         <div class="commodity-details">
-            <a th:href="@{'/' + ${selectedCommodity.commodityType} + '/testadf'}" class="btn">Test ADF</a>
-            <a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}" class="btn">Prognozy</a>
+            <a th:href="@{'/' + ${selectedCommodity.name} + '/testadf'}" class="btn">Test ADF</a>
+            <a th:href="@{'/' + ${selectedCommodity.name} + '/forecasts'}" class="btn">Prognozy</a>
             <h3 th:text="${selectedCommodity.name}">Nazwa Surowca</h3>
-            <p th:text="${'Typ Surowca: ' +
-    (selectedCommodity.commodityType == 'COPPER' ? 'Miedź' :
-    (selectedCommodity.commodityType == 'NATURAL_GAS' ? 'Gaz Ziemny' :
-    (selectedCommodity.commodityType == 'WHEAT' ? 'Zboże' :
-    (selectedCommodity.commodityType == 'BRENT' ? 'Ropa' :
-    (selectedCommodity.commodityType == 'ALUMINIUM' ? 'Aluminium' :
-    selectedCommodity.commodityType)))))}"></p>
 
-            <p th:text="${'Interwał: miesięczny'}"></p>
+            <p th:text="${'Interwał: dzienny'}"></p>
 
-            <p th:text="${'Jednostka: ' +
-    (selectedCommodity.unit == 'dollar per metric ton' ? 'dolar za tonę metryczną' :
-    (selectedCommodity.unit == 'dollars per million BTU' ? 'dolary za milion jednostek cieplnych' :
-    (selectedCommodity.unit == 'dollars per barrel' ? 'dolary za 1 baryłkę' :
-    selectedCommodity.unit)))}"></p>
-        </div>
-        <div class="chart-and-stats">
-            <div id="myChart"></div>
-            <div class="commodity-stats">
-                <div>
-                    <label for="chartType">Wybierz typ wykresu:</label>
+            <p th:text="${#strings.toString(currency) + '/' + #strings.toString(unit)}" class="commodity-info"></p>
+
+
+
+
+            <div class="chart-and-stats">
+                <div class="commodity-chart">
+                    <div id="myChart"></div>
+                </div>
+                <div class="commodity-stats">
+                    <label for="chartType">Wybierz typ surowca:</label>
                     <select id="chartType" onchange="updateChartType()">
                         <option value="line">Liniowy</option>
                         <option value="bar">Słupkowy</option>
                     </select>
+                    <h4>Statystyki Surowca:</h4>
+                    <table>
+                        <tr>
+                            <td>Minimum:</td>
+                            <td><span id="minValue"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Maksimum:</td>
+                            <td><span id="maxValue"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Średnia:</td>
+                            <td><span id="avgValue"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Data początkowa:</td>
+                            <td><span id="startDate"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Data końcowa:</td>
+                            <td><span id="endDate"></span></td>
+                        </tr>
+                    </table>
                 </div>
-                <h4>Statystyki Surowca:</h4>
-                <p>Minimum: <span id="minValue"></span> <span id="minDate"></span></p>
-                <p>Maksimum: <span id="maxValue"></span> <span id="maxDate"></span></p>
-                <p>Średnia: <span id="avgValue"></span></p>
-                <p>Data początkowa: <span id="startDate"></span></p>
-                <p>Data końcowa: <span id="endDate"></span></p>
+
+
             </div>
         </div>
     </main>
 </section>
 
 <script th:inline="javascript">
-
-    let dates = [[${dates}]];
+    let rawDates = [[${dates}]];
     let values = [[${values}]];
-    var reversedDates = dates.slice().reverse();
-    var reversedValues = values.slice().reverse();
+
+
+    let seriesData = [];
+    for (let i = 0; i < rawDates.length; i++) {
+        seriesData.push([new Date(rawDates[i]).getTime(), values[i]]);
+    }
     Highcharts.setOptions({
         lang: {
-            decimalPoint: ','
+            months: [
+                'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec',
+                'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'
+            ],
+            shortMonths: [
+                'Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze',
+                'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'
+            ],
+            weekdays: [
+                "Poniedziałek", "Wtorek","Środa","Czwartek","Piątek","Sobota","Niedziela"
+            ],
         }
     });
 
-    // Konfiguracja wykresu Highcharts
-    Highcharts.chart('myChart', {
+    // Utwórz obiekt konfiguracyjny dla wykresu
+    let chartOptions = {
         chart: {
             type: 'line',
-            zoomType: 'x'
+            zoomType: 'x', // Zaznaczanie i zoomowanie po osi X
         },
         title: {
-            text: '' // Ustaw pusty string jako tytuł
+            text: '',
         },
         xAxis: {
-            categories: reversedDates,
-            title: {
-                text: 'Data'
-            },
+            type: 'datetime',
             labels: {
-                step: Math.ceil(reversedDates.length / 10) // Krok etykiet osi X
-            }
+                formatter: function () {
+                    return Highcharts.dateFormat('%e %B %Y', this.value); // Format daty na polski
+                }
+            },
         },
         yAxis: {
             title: {
-                text: 'Cena surowca'
+                text: 'Cena',
             },
-            labels: {
-                format: '{value:,.2f}',
-                decimalPoint: ','// Formatowanie etykiet osi Y
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }]
         },
         tooltip: {
-            headerFormat: '<b>{point.x}</b><br>',
-            pointFormat: 'Cena surowca: {point.y:,.2f}',
             valueDecimals: 2,
-            decimalPoint: ','
+            decimalPoint: ","
         },
-        plotOptions: {
-            line: {
-                marker: {
-                    enabled: false // Wyłączenie punktów na wykresie
+        series: [
+            {
+                name: 'Cena surowca',
+                data: seriesData,
+            },
+        ],
+        navigator: {
+            enabled: true,
+            series: {
+                data: seriesData,
+            },
+        },
+        rangeSelector: {
+            selected: 3, // Domyślny zakres wykresu
+        },
+        exporting: {
+            buttons: {
+                contextButton: {
+                    menuItems: [
+                        'downloadPNG',
+                        'downloadJPEG',
+                        'downloadPDF',
+                        'downloadSVG',
+                        'separator',
+                        'downloadCSV',
+                        'downloadXLS'
+                    ]
                 }
             }
         },
-        series: [{
-            name: 'Cena surowca',
-            data: reversedValues
-        }],
-        boost: {
-            useGPUTranslations: true
+        plotOptions: {
+            series: {
+                connectNulls: true, // Połącz null wartości w serii danych
+                events: {}
+            }
         },
-        exporting: {
-            enabled: true
-        },
-        legend: {
-            enabled: false // Wyłączenie legendy
-        },
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 500
-                },
-                chartOptions: {
-                    legend: {
-                        layout: 'horizontal',
-                        align: 'center',
-                        verticalAlign: 'bottom'
-                    }
-                }
-            }]
-        }
-    });
+    };
+    let chart;
+    chart = Highcharts.stockChart('myChart', chartOptions);
+
+    // Aktualizuj statystyki po załadowaniu wykresu
+
+    let xAxis = chart.xAxis[0];
+
+    // Przygotuj dane do wykresu
+
+    if (seriesData.length > 0) {
+        // Znajdź minimum, maksimum i średnią
+        let minValue = Math.min(...seriesData.map(point => point[1]));
+        let minIndex = seriesData.findIndex(point => point[1] === minValue);
+
+        let maxValue = Math.max(...seriesData.map(point => point[1]));
+        let maxIndex = seriesData.findIndex(point => point[1] === maxValue);
 
 
-    let minValue = Math.min(...reversedValues);
-    let minIndex = reversedValues.indexOf(minValue);
-    let minDate = reversedDates[minIndex];
+        let avgValue = seriesData.reduce((sum, point) => sum + point[1], 0) / seriesData.length;
 
-    let maxValue = Math.max(...reversedValues);
-    let maxIndex = reversedValues.indexOf(maxValue);
-    let maxDate = reversedDates[maxIndex];
+        // Aktualizuj elementy HTML
+        document.getElementById('minValue').innerText = minValue;
 
-    document.getElementById('minValue').innerText = minValue.toFixed(2).replace('.', ',');
-    document.getElementById('minDate').innerText = `(${minDate.replace('.', ',')})`;
+        document.getElementById('maxValue').innerText = maxValue;
 
-    document.getElementById('maxValue').innerText = maxValue.toFixed(2).replace('.', ',');
-    document.getElementById('maxDate').innerText = `(${maxDate.replace('.', ',')})`;
+        document.getElementById('avgValue').innerText = avgValue.toFixed(2);
 
-    document.getElementById('avgValue').innerText = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2).replace('.', ',');
-    document.getElementById('startDate').innerText = dates[0].replace('.', ',');
-    document.getElementById('endDate').innerText = dates[dates.length - 1].replace('.', ',');
+        // Data początkowa i końcowa
+        document.getElementById('startDate').innerText = Highcharts.dateFormat('%e %B %Y', seriesData[0][0]);
+        document.getElementById('endDate').innerText = Highcharts.dateFormat('%e %B %Y', seriesData[seriesData.length - 1][0]);
+
+    }
+
 
 </script>
 <script src="/app.js"></script>

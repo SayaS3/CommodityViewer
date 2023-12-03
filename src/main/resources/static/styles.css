@@ -135,7 +135,6 @@ body.dark main {
 .sidebar .side-menu li a {
   height: 100%;
   width: 100%;
-  background: var(--light);
   display: flex;
   align-items: center;
   border-radius: 48px;
@@ -604,13 +603,7 @@ body.dark main {
   color: red;
 }
 
-/* Dodane style do komunikatów o stacjonarności */
-.content main .commodity-details span {
-  display: block;
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: 5px;
-}
+
 .commodity-details {
   padding-bottom: 15px;
 }
@@ -646,6 +639,33 @@ body.dark main {
     background-color: #2980b9; /* Kolor tła po najechaniu myszą - ciemniejszy odcień niebieskiego */
   transition: .3s;
 }
+.chart-and-stats {
+  display: flex;
+  justify-content: space-between;
+}
+
+.commodity-chart {
+  flex: 1;
+}
+
+.commodity-stats {
+  padding-left: 1rem;
+  width: 20%; /* Dostosuj szerokość statystyk według potrzeb */
+}
+#myChart {
+  margin-bottom: 20px; /* Dodaj odstęp między wykresem a statystykami */
+  height: 600px; /* Dostosuj wysokość wykresu według potrzeb */
+}
+#minDate{
+  display: block;
+}
+.commodity-info {
+  padding-top: 10px; /* dowolna wartość, którą chcesz zastosować od góry */
+  padding-bottom: 10px; /* dowolna wartość, którą chcesz zastosować od dołu */
+  font-size: 32px; /* dowolna wartość, aby zwiększyć rozmiar tekstu */
+  font-weight: bold;
+}
+
 @media (max-width: 768px) {
   .sidebar {
     width: 200px;

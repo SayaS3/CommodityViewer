@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -15,13 +16,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/")
 public class CommodityController {
 
     @Autowired
-    private CommodityDataService commodityService;
+    private CommodityService commodityService;
 
     @Autowired
     private ForecastService forecastService;
@@ -31,7 +33,9 @@ public class CommodityController {
 
     @GetMapping
     public String getHomePage(Model model) {
-        List<String> commodityTypes = Arrays.asList("COPPER", "ALUMINUM", "WHEAT", "NATURAL_GAS", "BRENT");
+        List<String> commodityTypes =  Arrays.stream(CommodityType.values())
+                .map(CommodityType::name)
+                .collect(Collectors.toList());
         model.addAttribute("commodityTypes", commodityTypes);
         model.addAttribute("selectedCommodity", commodityTypes);
 
@@ -40,19 +44,27 @@ public class CommodityController {
 
     @GetMapping("/{commodityType:[A-Za-z_]+}")
     public String getCleanDataPage(@PathVariable CommodityType commodityType, Model model) {
-        List<String> commodityTypes = Arrays.asList("COPPER", "ALUMINUM", "WHEAT", "NATURAL_GAS", "BRENT");
+
+        List<String> commodityTypes = Arrays.stream(CommodityType.values())
+                .map(CommodityType::name)
+                .collect(Collectors.toList());
 
         List<String> dates = new ArrayList<>();
         List<Double> values = new ArrayList<>();
 
-        commodityService.findByType(commodityType).ifPresent(commodity -> {
+        commodityService.findCommodityByName(commodityType.name()).ifPresent(commodity -> {
             model.addAttribute("selectedCommodity", commodity);
 
             // Uzupełnij listy danymi z data_point
-            for (DataPoint dataPoint : commodity.getData()) {
-                dates.add(dataPoint.getDate());
-                values.add(Double.valueOf(dataPoint.getValue_column()));
+            List<DataPointEntity> dataPoints = commodityService.getDataPointsForCommodity(commodity.getName());
+            for (DataPointEntity dataPoint : dataPoints) {
+                dates.add(String.valueOf(dataPoint.getTimestamp()));
+                values.add(dataPoint.getValue());
             }
+
+            // Dodaj jednostkę i walutę do modelu w zależności od wybranego surowca
+            model.addAttribute("unit", commodityType.getUnit());
+            model.addAttribute("currency", commodityType.getCurrency());
         });
 
         model.addAttribute("dates", dates);
@@ -61,20 +73,27 @@ public class CommodityController {
         return "data";
     }
 
+
+
+
     @GetMapping("/{commodityType}/testadf")
     public String getTestADFPage(@PathVariable CommodityType commodityType, Model model) {
-        List<String> commodityTypes = Arrays.asList("COPPER", "ALUMINUM", "WHEAT", "NATURAL_GAS", "BRENT");
+        List<String> commodityTypes =  Arrays.stream(CommodityType.values())
+                .map(CommodityType::name)
+                .collect(Collectors.toList());
 
-        commodityService.findByType(commodityType).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
+        commodityService.findCommodityByName(commodityType.name()).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
 
-        CommodityData selectedCommodity = commodityService.findByType(commodityType).orElse(null);
+        CommodityEntity selectedCommodity = commodityService.findCommodityByName(commodityType.name()).orElse(null);
 
         if (selectedCommodity != null) {
-            commodityService.findByType(commodityType).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
+            commodityService.findCommodityByName(commodityType.name()).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
             List<AdfResult> adfResults = adfResultService.getAdfResultsByCommodityId(selectedCommodity.getId());
             model.addAttribute("commodityTypes", commodityTypes);
             model.addAttribute("adfResults", adfResults);
             model.addAttribute("selectedCommodity", selectedCommodity);
+            model.addAttribute("unit", commodityType.getUnit());
+            model.addAttribute("currency", commodityType.getCurrency());
             return "testadf";
         } else {
             // Obsługa sytuacji, gdy nie znaleziono wybranego surowca
@@ -85,29 +104,34 @@ public class CommodityController {
 
     @GetMapping("/{commodityType}/forecasts")
     public String getForecastsPage(@PathVariable CommodityType commodityType, Model model) {
-        List<String> commodityTypes = Arrays.asList("COPPER", "ALUMINUM", "WHEAT", "NATURAL_GAS", "BRENT");
+        List<String> commodityTypes =  Arrays.stream(CommodityType.values())
+                .map(CommodityType::name)
+                .collect(Collectors.toList());
 
-        commodityService.findByType(commodityType).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
+        commodityService.findCommodityByName(commodityType.name()).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
 
-        CommodityData selectedCommodity = commodityService.findByType(commodityType).orElse(null);
+        CommodityEntity selectedCommodity = commodityService.findCommodityByName(commodityType.name()).orElse(null);
 
         List<String> dates = new ArrayList<>();
         List<Double> values = new ArrayList<>();
         List<String> forecastDates = new ArrayList<>();  // Dodaj listę dla dat prognoz
         List<Double> forecastValues = new ArrayList<>();  // Dodaj listę dla wartości prognoz
 
-        commodityService.findByType(commodityType).ifPresent(commodity -> {
+        commodityService.findCommodityByName(commodityType.name()).ifPresent(commodity -> {
             model.addAttribute("selectedCommodity", commodity);
 
             // Uzupełnij listy danymi z data_point
-            for (DataPoint dataPoint : commodity.getData()) {
-                dates.add(dataPoint.getDate());
-                values.add(Double.valueOf(dataPoint.getValue_column()));
+            List<DataPointEntity> dataPoints = commodityService.getDataPointsForCommodity(commodity.getName());
+            for (DataPointEntity dataPoint : dataPoints) {
+                dates.add(String.valueOf(dataPoint.getTimestamp()));
+                values.add(dataPoint.getValue());
+                model.addAttribute("unit", commodityType.getUnit());
+                model.addAttribute("currency", commodityType.getCurrency());
             }
         });
 
         if (selectedCommodity != null) {
-            commodityService.findByType(commodityType).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
+            commodityService.findCommodityByName(commodityType.name()).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
 
             List<Forecast> forecasts = forecastService.getForecastsByCommodityId(selectedCommodity.getId());
 
@@ -134,6 +158,5 @@ public class CommodityController {
 
 
 }
-
 
 

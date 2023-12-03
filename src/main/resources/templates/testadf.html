@@ -19,11 +19,17 @@
         <li th:each="commodity : ${commodityTypes}"
             th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
             <a th:href="@{'/' + ${commodity}}" class="nav-link">
-                <span th:text="${commodity == 'COPPER' ? 'Miedź' : (commodity == 'NATURAL_GAS' ? 'Gaz Ziemny' : (commodity == 'WHEAT' ? 'Zboże' : (commodity == 'BRENT' ? 'Ropa' : (commodity == 'ALUMINUM' ? 'Aluminium' : commodity))))}"></span>
+                <span th:text="${commodity == 'MIEDZ' ? 'Miedź' :
+                (commodity == 'ROPA' ? 'Ropa' :
+                 (commodity == 'SREBRO' ? 'Srebro' :(commodity == 'PLATYNA' ? 'Platyna' :
+                 (commodity == 'NIKIEL' ? 'Nikiel' :(commodity == 'CUKIER' ? 'Cukier' :
+                 (commodity == 'SOJA' ? 'Soja' : (commodity == 'PALLAD' ? 'Pallad' :
+                 (commodity == 'RZEPAK' ? 'Rzepak' : (commodity == 'KAWA' ? 'Kawa' :
+                 (commodity == 'PSZENICA' ? 'Pszenica' : (commodity == 'ZLOTO' ? 'Złoto' :
+                 (commodity == 'ALUMINIUM' ? 'Aluminium' : commodity))))))))))))}"></span>
             </a>
         </li>
     </ul>
-
 
 
     <ul class="side-menu">
@@ -67,24 +73,13 @@
             </a>
         </div>
         <div class="commodity-details">
-            <a th:href="@{'/' + ${selectedCommodity.commodityType}}" class="btn">Dane</a>
-            <a th:href="@{'/' + ${selectedCommodity.commodityType} + '/forecasts'}" class="btn">Przewidywania</a>
-            <h3 th:text="${selectedCommodity.name}">Nazwa surowca</h3>
-            <p th:text="${'Typ Surowca: ' +
-    (selectedCommodity.commodityType == 'COPPER' ? 'Miedź' :
-    (selectedCommodity.commodityType == 'NATURAL_GAS' ? 'Gaz Ziemny' :
-    (selectedCommodity.commodityType == 'WHEAT' ? 'Zboże' :
-    (selectedCommodity.commodityType == 'BRENT' ? 'Ropa' :
-    (selectedCommodity.commodityType == 'ALUMINIUM' ? 'Aluminium' :
-    selectedCommodity.commodityType)))))}"></p>
+            <a th:href="@{'/' + ${selectedCommodity.name} + '/testadf'}" class="btn">Test ADF</a>
+            <a th:href="@{'/' + ${selectedCommodity.name} + '/forecasts'}" class="btn">Prognozy</a>
+            <h3 th:text="${selectedCommodity.name}">Nazwa Surowca</h3>
 
-            <p th:text="${'Interwał: miesięczny'}"></p>
+            <p th:text="${'Interwał: dzienny'}"></p>
 
-            <p th:text="${'Jednostka: ' +
-    (selectedCommodity.unit == 'dollar per metric ton' ? 'dolar za tonę metryczną' :
-    (selectedCommodity.unit == 'dollars per million BTU' ? 'dolary za milion jednostek cieplnych' :
-    (selectedCommodity.unit == 'dollars per barrel' ? 'dolary za 1 baryłkę' :
-    selectedCommodity.unit)))}"></p>
+
 
         </div>
         <div>

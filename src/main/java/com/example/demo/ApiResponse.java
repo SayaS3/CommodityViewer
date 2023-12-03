@@ -1,53 +1,30 @@
 package com.example.demo;
 
-import com.example.demo.Commodity.DataPoint;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.example.demo.Commodity.DataPoint;
+
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ApiResponse {
-    @JsonProperty("name")
-    private String name;
-    @JsonProperty("interval")
-    private String interval_column;
-    @JsonProperty("unit")
-    private String unit;
-    @JsonProperty("data")
-    private List<DataPoint> data;
+    private List<List<Number>> main;
 
-    public ApiResponse() {
+    public List<List<Number>> getMain() {
+        return main;
     }
 
-    public String getName() {
-        return name;
+    public void setMain(List<List<Number>> main) {
+        this.main = main;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getInterval_column() {
-        return interval_column;
-    }
-
-    public void setInterval_column(String interval_column) {
-        this.interval_column = interval_column;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    public List<DataPoint> getData() {
-        return data;
-    }
-
-    public void setData(List<DataPoint> data) {
-        this.data = data;
+    public List<DataPoint> getDataPoints() {
+        List<DataPoint> dataPoints = new ArrayList<>();
+        for (List<Number> entry : main) {
+            if (entry.size() == 2) {
+                dataPoints.add(new DataPoint(new Date(entry.get(0).longValue()), entry.get(1).doubleValue()));
+            }
+        }
+        return dataPoints;
     }
 }
-

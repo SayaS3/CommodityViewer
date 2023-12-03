@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
-// Forecast.java
-// Forecast.java
-// Forecast.java
+
 @Entity
 @Table(name = "forecasts")
 public class Forecast {
@@ -61,5 +59,3 @@ public class Forecast {
 }
 
 
-
-// AdfResult.java

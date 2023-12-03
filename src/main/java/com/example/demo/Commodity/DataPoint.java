@@ -1,38 +1,42 @@
 package com.example.demo.Commodity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
 
+import java.util.Date;
 
-@Entity
-@Table(name = "DATA_POINT")
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+
 public class DataPoint {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @JsonProperty("date")
-    private String date;
-    @JsonProperty("value")
-    private String value_column;
+    private Date timestamp;
+    private Double value;
 
     public DataPoint() {
     }
 
-
-    public String getDate() {
-        return date;
+    public Date getTimestamp() {
+        return timestamp;
+    }
+    public DataPoint(Date timestamp, Double value) {
+        this.timestamp = timestamp;
+        this.value = value;
+    }
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public Double getValue() {
+        return value;
     }
 
-    public String getValue_column() {
-        return value_column;
+    public void setValue(Double value) {
+        this.value = value;
     }
-
-    public void setValue_column(String value) {
-        this.value_column = value;
+    @Override
+    public String toString() {
+        return "DataPointEntity{" +
+                "id=" + id +
+                ", timestamp=" + timestamp +
+                ", value=" + value +
+                '}';
     }
 }
 

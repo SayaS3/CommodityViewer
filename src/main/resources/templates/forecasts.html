@@ -6,6 +6,11 @@
     <title>Commodity Page</title>
     <link rel="stylesheet" type="text/css" href="/styles.css">
     <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/stock.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/moment.js"></script>
 </head>
 
 <body>
@@ -19,11 +24,17 @@
         <li th:each="commodity : ${commodityTypes}"
             th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
             <a th:href="@{'/' + ${commodity}}" class="nav-link">
-                <span th:text="${commodity == 'COPPER' ? 'Miedź' : (commodity == 'NATURAL_GAS' ? 'Gaz Ziemny' : (commodity == 'WHEAT' ? 'Zboże' : (commodity == 'BRENT' ? 'Ropa' : (commodity == 'ALUMINUM' ? 'Aluminium' : commodity))))}"></span>
+                <span th:text="${commodity == 'MIEDZ' ? 'Miedź' :
+                (commodity == 'ROPA' ? 'Ropa' :
+                 (commodity == 'SREBRO' ? 'Srebro' :(commodity == 'PLATYNA' ? 'Platyna' :
+                 (commodity == 'NIKIEL' ? 'Nikiel' :(commodity == 'CUKIER' ? 'Cukier' :
+                 (commodity == 'SOJA' ? 'Soja' : (commodity == 'PALLAD' ? 'Pallad' :
+                 (commodity == 'RZEPAK' ? 'Rzepak' : (commodity == 'KAWA' ? 'Kawa' :
+                 (commodity == 'PSZENICA' ? 'Pszenica' : (commodity == 'ZLOTO' ? 'Złoto' :
+                 (commodity == 'ALUMINIUM' ? 'Aluminium' : commodity))))))))))))}"></span>
             </a>
         </li>
     </ul>
-
 
     <ul class="side-menu">
         <li>
@@ -66,24 +77,13 @@
         </div>
 
         <div class="commodity-details">
-            <a th:href="@{'/' + ${selectedCommodity.commodityType}}" class="btn">Dane</a>
-            <a th:href="@{'/' + ${selectedCommodity.commodityType} + '/testadf'}" class="btn">Test ADF</a>
-            <h3 th:text="${selectedCommodity.name}">Nazwa surowca</h3>
-            <p th:text="${'Typ Surowca: ' +
-    (selectedCommodity.commodityType == 'COPPER' ? 'Miedź' :
-    (selectedCommodity.commodityType == 'NATURAL_GAS' ? 'Gaz Ziemny' :
-    (selectedCommodity.commodityType == 'WHEAT' ? 'Zboże' :
-    (selectedCommodity.commodityType == 'BRENT' ? 'Ropa' :
-    (selectedCommodity.commodityType == 'ALUMINIUM' ? 'Aluminium' :
-    selectedCommodity.commodityType)))))}"></p>
+            <a th:href="@{'/' + ${selectedCommodity.name} + '/testadf'}" class="btn">Test ADF</a>
+            <a th:href="@{'/' + ${selectedCommodity.name} + '/forecasts'}" class="btn">Prognozy</a>
+            <h3 th:text="${selectedCommodity.name}">Nazwa Surowca</h3>
 
-            <p th:text="${'Interwał: miesięczny'}"></p>
+            <p th:text="${'Interwał: dzienny'}"></p>
+            <p th:text="${#strings.toString(currency) + '/' + #strings.toString(unit)}" class="commodity-info"></p>
 
-            <p th:text="${'Jednostka: ' +
-    (selectedCommodity.unit == 'dollar per metric ton' ? 'dolar za tonę metryczną' :
-    (selectedCommodity.unit == 'dollars per million BTU' ? 'dolary za milion jednostek cieplnych' :
-    (selectedCommodity.unit == 'dollars per barrel' ? 'dolary za 1 baryłkę' :
-    selectedCommodity.unit)))}"></p>
 
         </div>
         <div class="holt-description">
@@ -127,107 +127,128 @@
 <script th:inline="javascript">
     let forecastDates = [[${forecastDates}]];
     let forecastValues = [[${forecastValues}]];
-    let reversedForecastDates = forecastDates.reverse();
-    let reversedForecastValues = forecastValues.reverse();
-    let dates = [[${dates}]];
+    let rawDates = [[${dates}]];
     let values = [[${values}]];
-    var reversedDates = dates.slice().reverse();
-    var reversedValues = values.slice().reverse();
-    let combinedDates = reversedDates.concat(reversedForecastDates);
-    let combinedValues = reversedValues.concat(reversedForecastValues);
-    // Połącz daty i wartości dla prognoz w jedną tablicę
-    let reversedForecastData = forecastDates.map((date, index) => [date, forecastValues[index]]).reverse();
+    // Przygotuj dane do wykresu
+    let seriesData = [];
+    for (let i = 0; i < rawDates.length; i++) {
+        seriesData.push([new Date(rawDates[i]).getTime(), values[i]]);
+    }
 
-    // Połącz daty i wartości historyczne w jedną tablicę
-    let reversedHistoricalData = dates.map((date, index) => [date, values[index]]).reverse();
+    let forecastData = [];
+    for (let i = 0; i < forecastDates.length; i++) {
+        forecastData.push([new Date(forecastDates[i]).getTime(), forecastValues[i]]);
+    }
 
-    Highcharts.setOptions({
-        lang: {
-            decimalPoint: ','
-        }
-    });
-
-    // Konfiguracja wykresu Highcharts
-    Highcharts.chart('myChart', {
+    // Utwórz obiekt konfiguracyjny dla wykresu
+    let chartOptions = {
         chart: {
             type: 'line',
-            zoomType: 'x'
+            zoomType: 'x', // Zaznaczanie i zoomowanie po osi X
         },
         title: {
-            text: '' // Ustaw pusty string jako tytuł
+            text: '',
         },
         xAxis: {
-            categories: combinedDates,
-            title: {
-                text: 'Data'
-            },
+            type: 'datetime',
             labels: {
-                step: Math.ceil(combinedDates.length / 10) // Krok etykiet osi X
-            }
+                formatter: function () {
+                    return Highcharts.dateFormat('%e %b %Y', this.value); // Format daty na polski
+                }
+            },
         },
         yAxis: {
             title: {
-                text: 'Cena surowca'
+                text: 'Cena',
             },
             labels: {
-                format: '{value:,.2f}',
-                decimalPoint: ',' // Formatowanie etykiet osi Y
+                formatter: function () {
+                    return this.value.toString().replace('.', ','); // Zamień kropkę na przecinek
+                }
             },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }]
         },
         tooltip: {
-            headerFormat: '<b>{point.x}</b><br>',
-            pointFormat: 'Cena surowca: {point.y:,.2f}',
             valueDecimals: 2,
-            decimalPoint: ','
-        },
-        plotOptions: {
-            line: {
-                marker: {
-                    enabled: false // Wyłączenie punktów na wykresie
-                }
-            }
+            decimalPoint: ","
         },
         series: [
-
             {
-                name: 'Holt-Winters',
-                data: combinedValues,
-                color: 'red' // Kolor dla danych prognozowanych
+                name: 'Ceny surowca',
+                data: seriesData,
             },
             {
-                name: 'Cena surowca',
-                data: reversedValues
+                name: 'Prognozowane ceny surowca',
+                data: forecastData,
+                color: 'orange', // Kolor dla wykresu prognozowanego
             }
         ],
-        boost: {
-            useGPUTranslations: true
+        navigator: {
+            enabled: true,
+            series: {
+                data: seriesData,
+            },
         },
-        exporting: {
-            enabled: true
+        rangeSelector: {
+            buttons: [
+                {
+                    type: 'day',
+                    count: 3,
+                    text: '3D',
+                },
+                {
+                    type: 'week',
+                    count: 1,
+                    text: '1W',
+                },
+                {
+                    type: 'month',
+                    count: 1,
+                    text: '1M',
+                },
+                {
+                    type: 'all',
+                    text: 'All',
+                },
+            ],
+            selected: 3,
         },
         legend: {
-            enabled: true // Włącz legendę
+            enabled: true, // Włącz legendę
         },
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 500
+        plotOptions: {
+            series: {
+                connectNulls: true, // Połącz null wartości w serii danych
+            }
+        },
+    };
+    Highcharts.setOptions({
+        lang: {
+            months: [
+                'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec',
+                'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'
+            ],
+            shortMonths: [
+                'Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze',
+                'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'
+            ],
+            weekdays: [
+                'Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'
+            ],
+            shortWeekdays: [
+                'Nd', 'Pn', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob'
+            ],
+            legend: {
+                navigation: {
+                    enabled: true,
                 },
-                chartOptions: {
-                    legend: {
-                        layout: 'horizontal',
-                        align: 'center',
-                        verticalAlign: 'bottom'
-                    }
+                title: {
+                    text: 'Legenda'
                 }
-            }]
+            }
         }
     });
+    // Utwórz wykres na podstawie konfiguracji
+    let chart = Highcharts.stockChart('myChart', chartOptions);
 </script>
 <script th:inline="javascript" src="/app.js"></script>
 </body>

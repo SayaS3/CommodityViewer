@@ -16,23 +16,25 @@
       </a>
 
       <ul class="side-menu top">
-        <li th:each="commodity : ${commodityTypes}" th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
+        <li th:each="commodity : ${commodityTypes}"
+            th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
           <a th:href="@{'/' + ${commodity}}" class="nav-link">
-            <span th:text="${commodity}"></span>
+            <span th:text="${commodity == 'MIEDZ' ? 'Miedź' : (commodity == 'ROPA' ? 'Ropa' : (commodity == 'SREBRO' ? 'Srebro' :(commodity == 'PLATYNA' ? 'Platyna' : (commodity == 'NIKIEL' ? 'Nikiel' :(commodity == 'CUKIER' ? 'Cukier' : (commodity == 'SOJA' ? 'Soja' : (commodity == 'PALLAD' ? 'Pallad' : (commodity == 'RZEPAK' ? 'Rzepak' : (commodity == 'KAWA' ? 'Kawa' :(commodity == 'PSZENICA' ? 'Pszenica' : (commodity == 'ZLOTO' ? 'Złoto' : (commodity == 'ALUMINIUM' ? 'Aluminium' : commodity))))))))))))}"></span>
           </a>
         </li>
       </ul>
 
 
+
       <ul class="side-menu">
         <li>
           <a href="#">
-            <span class="text">Settings</span>
+            <span class="text">Ustawienia</span>
           </a>
         </li>
         <li>
           <a href="#" class="logout">
-            <span class="text">Logout</span>
+            <span class="text">Wyloguj</span>
           </a>
         </li>
       </ul>
