@@ -1,21 +1,19 @@
-package com.example.demo.Commodity;
+package com.example.CommodityViewer.Commodity;
 
-import com.example.demo.ADF.AdfResult;
-import com.example.demo.ADF.AdfResultService;
-import com.example.demo.FORECAST.Forecast;
-import com.example.demo.FORECAST.ForecastService;
+import com.example.CommodityViewer.ADF.AdfResult;
+import com.example.CommodityViewer.ADF.AdfResultService;
+import com.example.CommodityViewer.FORECAST.Forecast;
+import com.example.CommodityViewer.FORECAST.ForecastService;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -41,7 +39,55 @@ public class CommodityController {
 
         return "home";
     }
+    @GetMapping("/correlations")
+    public String getCorrelation(Model model) {
+        List<String> commodityTypes = Arrays.stream(CommodityType.values())
+                .map(CommodityType::name)
+                .collect(Collectors.toList());
+        model.addAttribute("commodityTypes", commodityTypes);
 
+        return "correlations";
+    }
+
+    @PostMapping("/correlations")
+    public String showCorrelation(@RequestParam("commodity1") String commodity1,
+                                  @RequestParam("commodity2") String commodity2,
+                                  Model model) {
+
+        List<String> dates = new ArrayList<>();
+        List<String> dates2 = new ArrayList<>();
+        List<Double> values = new ArrayList<>();
+        List<Double> values2 = new ArrayList<>();
+        List<String> commodityTypes = Arrays.stream(CommodityType.values())
+                .map(CommodityType::name)
+                .collect(Collectors.toList());
+        CommodityEntity selectedCommodity1 = commodityService.findCommodityByName(commodity1).orElse(null);
+        CommodityEntity selectedCommodity2 = commodityService.findCommodityByName(commodity2).orElse(null);
+
+        if (selectedCommodity1 != null && selectedCommodity2 != null) {
+            List<DataPointEntity> dataPoints1 = commodityService.getDataPointsForCommodity(selectedCommodity1.getName());
+            for (DataPointEntity dataPoint : dataPoints1) {
+                dates.add(String.valueOf(dataPoint.getTimestamp()));
+                values.add(dataPoint.getValue());
+            }
+
+            List<DataPointEntity> dataPoints2 = commodityService.getDataPointsForCommodity(selectedCommodity2.getName());
+            for (DataPointEntity dataPoint : dataPoints2) {
+                dates2.add(String.valueOf(dataPoint.getTimestamp()));
+                values2.add(dataPoint.getValue());
+            }
+            model.addAttribute("dates", dates);
+            model.addAttribute("values", values);
+            model.addAttribute("commodity1", selectedCommodity1);
+            model.addAttribute("dates2", dates2);
+            model.addAttribute("values2", values2);
+            model.addAttribute("commodity2", selectedCommodity2);
+            model.addAttribute("commodityTypes", commodityTypes);
+            model.addAttribute("selectedCommodity", commodityTypes);
+        }
+
+        return "correlations";
+    }
     @GetMapping("/{commodityType:[A-Za-z_]+}")
     public String getCleanDataPage(@PathVariable CommodityType commodityType, Model model) {
 
@@ -72,8 +118,6 @@ public class CommodityController {
         model.addAttribute("commodityTypes", commodityTypes);
         return "data";
     }
-
-
 
 
     @GetMapping("/{commodityType}/testadf")

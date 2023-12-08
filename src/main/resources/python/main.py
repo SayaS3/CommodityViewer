@@ -1,4 +1,3 @@
-import mysql.connector
 import pandas as pd
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
@@ -81,7 +80,7 @@ def delete_previous_forecasts(commodity_id):
     with engine.connect() as connection:
         trans = connection.begin()  # Rozpocznij transakcję
         try:
-            result = connection.execute(text("DELETE FROM forecasts WHERE commodity_id = :commodity_id"),
+            result = connection.execute(text("DELETE FROM holtwinters WHERE commodity_id = :commodity_id"),
                                         {"commodity_id": commodity_id})
             trans.commit()  # Zatwierdź transakcję
         except Exception as e:
@@ -95,7 +94,7 @@ def save_forecast_to_db(commodity_id, forecast):
         try:
             for date, value in forecast.items():
                 connection.execute(text(
-                    "INSERT INTO forecasts (commodity_id, forecast_date, forecast_value) VALUES (:commodity_id, :forecast_date, :forecast_value)"),
+                    "INSERT INTO holtwinters (commodity_id, forecast_date, forecast_value) VALUES (:commodity_id, :forecast_date, :forecast_value)"),
                     {"commodity_id": commodity_id, "forecast_date": date, "forecast_value": value})
             trans.commit()  # Zatwierdź transakcję
         except Exception as e:

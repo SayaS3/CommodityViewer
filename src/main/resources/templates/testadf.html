@@ -11,25 +11,43 @@
 <body>
 
 <section class="sidebar">
-    <a href="#" class="logo">
+    <a href="/" class="logo">
         <span class="text">CommodityViewer</span>
     </a>
 
     <ul class="side-menu top">
-        <li th:each="commodity : ${commodityTypes}"
-            th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
+        <li><a th:href="@{'/' + 'correlations'}"><span>Korelacje surowców</span></a></li>
+
+        <div class="commodities-label">
+            <span>Surowce</span>
+        </div>
+        <li th:each="commodity : ${commodityTypes}" th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
             <a th:href="@{'/' + ${commodity}}" class="nav-link">
                 <span th:text="${commodity == 'MIEDZ' ? 'Miedź' :
-                (commodity == 'ROPA' ? 'Ropa' :
-                 (commodity == 'SREBRO' ? 'Srebro' :(commodity == 'PLATYNA' ? 'Platyna' :
-                 (commodity == 'NIKIEL' ? 'Nikiel' :(commodity == 'CUKIER' ? 'Cukier' :
-                 (commodity == 'SOJA' ? 'Soja' : (commodity == 'PALLAD' ? 'Pallad' :
-                 (commodity == 'RZEPAK' ? 'Rzepak' : (commodity == 'KAWA' ? 'Kawa' :
-                 (commodity == 'PSZENICA' ? 'Pszenica' : (commodity == 'ZLOTO' ? 'Złoto' :
-                 (commodity == 'ALUMINIUM' ? 'Aluminium' : commodity))))))))))))}"></span>
+                    (commodity == 'ROPA' ? 'Ropa' :
+                        (commodity == 'SREBRO' ? 'Srebro' :
+                            (commodity == 'PLATYNA' ? 'Platyna' :
+                                (commodity == 'NIKIEL' ? 'Nikiel' :
+                                    (commodity == 'CUKIER' ? 'Cukier' :
+                                        (commodity == 'SOJA' ? 'Soja' :
+                                            (commodity == 'PALLAD' ? 'Pallad' :
+                                                (commodity == 'RZEPAK' ? 'Rzepak' :
+                                                    (commodity == 'KAWA' ? 'Kawa' :
+                                                        (commodity == 'PSZENICA' ? 'Pszenica' :
+                                                            (commodity == 'ZLOTO' ? 'Złoto' :
+                                                                (commodity == 'ALUMINIUM' ? 'Aluminium' :
+                                                                    (commodity == 'KUKURYDZA' ? 'Kukurydza' :
+                                                                        commodity)))))))))))))}"></span>
             </a>
+
+            <!-- Display links only for the selected commodity -->
+            <a th:if="${#strings.equals(selectedCommodity, commodity)}" th:href="@{'/' + ${commodity} + '/testadf'}">Test ADF</a>
+            <a th:if="${#strings.equals(selectedCommodity, commodity)}" th:href="@{'/' + ${commodity} + '/forecasts'}">Holt-Winters Model</a>
+            <a th:if="${#strings.equals(selectedCommodity, commodity)}" th:href="@{'/' + ${commodity} + '/correlation'}">Korelacja</a>
         </li>
     </ul>
+
+    <!-- Add label "SurowcE" above commodities -->
 
 
     <ul class="side-menu">
@@ -121,7 +139,41 @@
             </tr>
             </tbody>
         </table>
+        <div class="adf-info-text">
+            <p>
+                Tabela przedstawia wyniki testu ADF dla szeregu czasowego. Poszczególne kolumny zawierają istotne informacje,
+                takie jak statystyka ADF, wartość P-Value, wartości krytyczne oraz informację o stacjonarności szeregu czasowego.
+                Dodatkowe opisy pomagają zinterpretować, czy szereg czasowy jest stabilny czy wykazuje tendencję do zmian.
+            </p>
 
+            <!-- Opisy dla poszczególnych kolumn -->
+            <ul class="adf-info">
+                <li>
+                    <strong>ADF Statistic:</strong> Statystyka testu Augmented Dickey-Fuller. Im niższa wartość, tym lepiej dla stacjonarności szeregu czasowego.
+                </li>
+                <li>
+                    <strong>P-Value:</strong> Wartość p, która pomaga ocenić, czy możemy odrzucić hipotezę o niestacjonarności. Niższa wartość p sugeruje większą pewność w stwierdzeniu, że szereg czasowy jest stacjonarny.
+                </li>
+                <li>
+                    <strong>Critical Values:</strong> Wartości krytyczne dla różnych poziomów istotności. Porównujemy ADF Statistic z tymi wartościami, a jeśli jest niższy, możemy odrzucić hipotezę o niestacjonarności.
+                </li>
+                <li>
+                    <strong>Is Stationary:</strong> Informacja czy szereg czasowy jest stacjonarny czy nie. Wartość 1 oznacza stacjonarność, a 0 niestacjonarność.
+                    <ul>
+                        <li>
+                <span class="isStationary">
+                    <strong>Stacjonarny:</strong> Szereg czasowy jest stacjonarny, co może oznaczać, że cena tego surowca jest bardziej stabilna w czasie.
+                </span>
+                        </li>
+                        <li>
+                <span class="notStationary">
+                    <strong>Niestacjonarny:</strong> Szereg czasowy jest niestacjonarny, co może oznaczać większą zmienność w cenach tego surowca w czasie.
+                </span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
 
     </main>
 

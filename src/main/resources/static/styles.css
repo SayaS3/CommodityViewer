@@ -14,10 +14,10 @@
   --lato: "Lato", sans-serif;
 
   --light: #f9f9f9;
-  --blue: #1d84ff;
+  --blue: #2a89fc;
   --light-blue: #2f84d9;
   --grey: #eee;
-  --dark-grey: #aaaaaa;
+  --dark-grey: #eeeaea;
   --dark: #000000;
   --red: #db504a;
   --yellow: #ffce26;
@@ -96,60 +96,42 @@ body.dark main {
 }
 
 .sidebar .side-menu li {
-  height: 48px;
+  height: 38px;
   margin-left: 6px;
   background: transparent;
   border-radius: 48px 0 0 48px;
-  padding: 4px;
 }
-
+.sidebar .side-menu li:hover {
+  background-color: var(--grey);
+}
 .sidebar .side-menu li.active {
   position: relative;
   background: var(--grey);
 }
-
-.sidebar .side-menu li.active::before {
-  content: "";
-  position: absolute;
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-  right: 0;
-  top: -40px;
-  z-index: -1;
-  box-shadow: 20px 20px 0 var(--grey);
-}
-
-.sidebar .side-menu li.active::after {
-  content: "";
-  position: absolute;
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-  right: 0;
-  bottom: -40px;
-  z-index: -1;
-  box-shadow: 20px -20px 0 var(--grey);
+.commodities-label {
+  color: #9aacaf;
+  padding: 12px;
 }
 
 .sidebar .side-menu li a {
   height: 100%;
   width: 100%;
   display: flex;
+  padding: 8px;
   align-items: center;
-  border-radius: 48px;
+  border-radius: 32px;
   font-size: 16px;
   color: var(--dark);
   white-space: nowrap;
   overflow-x: hidden;
 }
 
-.sidebar.hide .side-menu li a {
+.sidebar.hide .side-menu li a span {
   width: calc(48px - (4px * 2));
   transition: 0.3s ease;
 }
 
-.sidebar .side-menu li.active a {
+.sidebar .side-menu li.active a span{
   color: var(--blue);
 }
 
@@ -233,6 +215,50 @@ body.dark main {
   display: flex;
   align-items: center;
   height: 36px;
+}
+
+/* Styling for the labels */
+.form-label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px; /* Dodatkowy odstęp na dole */
+}
+
+/* Styling for the select boxes */
+.form-select {
+  display: inline-block; /* Wyświetlanie elementu obok siebie */
+  padding: 4px;
+  width: 95px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.3s;
+  margin-bottom: 12px;
+}
+
+.form-select:hover {
+  border-color: var(--light-blue);
+}
+.corr-box{
+  display: flex;
+  flex-direction: column;
+}
+/* Styling for the button */
+.form-button {
+  background-color: var(--light-blue);
+  color: white;
+  padding: 8px 13px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.form-button:hover {
+  background-color: var(--blue);
 }
 
 .content nav form .form-input input {
@@ -636,7 +662,7 @@ body.dark main {
 }
 
 .btn:hover {
-    background-color: #2980b9; /* Kolor tła po najechaniu myszą - ciemniejszy odcień niebieskiego */
+  background-color: #2980b9; /* Kolor tła po najechaniu myszą - ciemniejszy odcień niebieskiego */
   transition: .3s;
 }
 .chart-and-stats {
@@ -654,10 +680,40 @@ body.dark main {
 }
 #myChart {
   margin-bottom: 20px; /* Dodaj odstęp między wykresem a statystykami */
-  height: 600px; /* Dostosuj wysokość wykresu według potrzeb */
+  height: 650px; /* Dostosuj wysokość wykresu według potrzeb */
 }
 #minDate{
   display: block;
+}
+label[for="chartType"] {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px; /* Dodatkowy odstęp na dole */
+
+}
+#chartType {
+  padding: 4px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.3s;
+  margin-bottom: 12px;
+}
+
+#chartType:hover {
+  border-color: var(--light-blue);
+}
+.adf-info-text{
+  margin-top: 12px;
+}
+.adf-info li{
+  margin-top: 12px;
+}
+#chartType:focus {
+  border-color: var(--light-blue);
+  box-shadow: var(--blue);
 }
 .commodity-info {
   padding-top: 10px; /* dowolna wartość, którą chcesz zastosować od góry */

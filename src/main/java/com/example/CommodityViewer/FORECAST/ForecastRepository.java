@@ -1,4 +1,4 @@
-package com.example.demo.FORECAST;
+package com.example.CommodityViewer.FORECAST;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

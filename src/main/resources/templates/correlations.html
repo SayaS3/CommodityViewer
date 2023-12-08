@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <title>Commodity Page</title>
@@ -11,10 +10,11 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-
 <section class="sidebar">
     <a href="/" class="logo">
         <span class="text">CommodityViewer</span>
@@ -45,15 +45,8 @@
                                                                         commodity)))))))))))))}"></span>
             </a>
 
-            <!-- Display links only for the selected commodity -->
-            <a th:if="${#strings.equals(selectedCommodity, commodity)}" th:href="@{'/' + ${commodity} + '/testadf'}">Test ADF</a>
-            <a th:if="${#strings.equals(selectedCommodity, commodity)}" th:href="@{'/' + ${commodity} + '/forecasts'}">Holt-Winters Model</a>
-            <a th:if="${#strings.equals(selectedCommodity, commodity)}" th:href="@{'/' + ${commodity} + '/correlation'}">Korelacja</a>
         </li>
     </ul>
-
-    <!-- Add label "SurowcE" above commodities -->
-
 
     <ul class="side-menu">
         <li>
@@ -68,13 +61,14 @@
         </li>
     </ul>
 </section>
+
 <section class="content">
     <nav>
-
         <form action="#">
             <div class="form-input">
                 <input type="search" placeholder="search..." />
                 <button class="search-btn">
+                    <i class="fas fa-search search-icon"></i>
                 </button>
             </div>
         </form>
@@ -82,84 +76,92 @@
         <input type="checkbox" hidden id="switch-mode" />
         <label for="switch-mode" class="switch-mode"></label>
 
-
         <a href="#" class="profile">
-            <img src="/profile.png" alt=""/>
+            <img src="/profile.png" alt="" />
         </a>
     </nav>
+
     <main>
-        <div class="top-main">
-            <h1>Panel</h1>
-            <a href="#" class="download-btn">
-                <span class="text">Pobierz raport</span>
-            </a>
-        </div>
+        <form id="correlationForm" class="correlation-form" action="/correlations" method="post" onsubmit="return validateForm()">
+            <div class="corr-box">
+                <label for="commodity1" class="form-label">Wybierz pierwszy surowiec</label>
+                <select id="commodity1" name="commodity1" class="form-select" onchange="updateDropdown2()">
+                    <option th:each="commodity : ${commodityTypes}" th:value="${commodity}" th:text="${commodity == 'MIEDZ' ? 'Miedź' :
+                    (commodity == 'ROPA' ? 'Ropa' :
+                        (commodity == 'SREBRO' ? 'Srebro' :
+                            (commodity == 'PLATYNA' ? 'Platyna' :
+                                (commodity == 'NIKIEL' ? 'Nikiel' :
+                                    (commodity == 'CUKIER' ? 'Cukier' :
+                                        (commodity == 'SOJA' ? 'Soja' :
+                                            (commodity == 'PALLAD' ? 'Pallad' :
+                                                (commodity == 'RZEPAK' ? 'Rzepak' :
+                                                    (commodity == 'KAWA' ? 'Kawa' :
+                                                        (commodity == 'PSZENICA' ? 'Pszenica' :
+                                                            (commodity == 'ZLOTO' ? 'Złoto' :
+                                                                (commodity == 'ALUMINIUM' ? 'Aluminium' :
+                                                                    (commodity == 'KUKURYDZA' ? 'Kukurydza' :
+                                                                        commodity)))))))))))))}"></option>
+                </select>
+            </div>
+            <div class="corr-box">
+                <label for="commodity2" class="form-label">Wybierz drugi surowiec</label>
+                <select id="commodity2" name="commodity2" class="form-select">
+                    <option th:each="commodity : ${commodityTypes}" th:value="${commodity}" th:text="${commodity == 'MIEDZ' ? 'Miedź' :
+                    (commodity == 'ROPA' ? 'Ropa' :
+                        (commodity == 'SREBRO' ? 'Srebro' :
+                            (commodity == 'PLATYNA' ? 'Platyna' :
+                                (commodity == 'NIKIEL' ? 'Nikiel' :
+                                    (commodity == 'CUKIER' ? 'Cukier' :
+                                        (commodity == 'SOJA' ? 'Soja' :
+                                            (commodity == 'PALLAD' ? 'Pallad' :
+                                                (commodity == 'RZEPAK' ? 'Rzepak' :
+                                                    (commodity == 'KAWA' ? 'Kawa' :
+                                                        (commodity == 'PSZENICA' ? 'Pszenica' :
+                                                            (commodity == 'ZLOTO' ? 'Złoto' :
+                                                                (commodity == 'ALUMINIUM' ? 'Aluminium' :
+                                                                    (commodity == 'KUKURYDZA' ? 'Kukurydza' :
+                                                                        commodity)))))))))))))}" th:selected="${commodity == 'ZLOTO'}"></option>
+                </select>
+            </div>
+            <button type="submit" class="form-button">Korelacja</button>
+        </form>
 
-        <div class="commodity-details">
-            <a th:href="@{'/' + ${selectedCommodity.name} + '/testadf'}" class="btn">Test ADF</a>
-            <a th:href="@{'/' + ${selectedCommodity.name} + '/forecasts'}" class="btn">Prognozy</a>
-            <h3 th:text="${selectedCommodity.name}">Nazwa Surowca</h3>
-
-            <p th:text="${'Interwał: dzienny'}"></p>
-            <p th:text="${#strings.toString(currency) + '/' + #strings.toString(unit)}" class="commodity-info"></p>
-
-
-        </div>
-        <div class="holt-description">
-            <p>
-                Model prognozowania: Holt-Winters Forecast. Jest to zaawansowany model szeregów czasowych, wykorzystywany
-                do prognozowania przyszłych cen surowców na podstawie ich historycznych danych. Model ten integruje trzy
-                składowe: poziom (level), trend i sezonowość.
-                Składowa poziomu odzwierciedla średnią wartość surowca, trend prognozuje kierunek i nachylenie zmian cen,
-                natomiast składowa sezonowości uwzględnia cykliczne wzorce, które mogą występować w określonych okresach czasu,
-                na przykład sezonowość roczna lub kwartalna
-            </p>
-        </div>
+        <h2 th:if="${not #strings.isEmpty(commodity1) and not #strings.isEmpty(commodity2)}">
+            Wybrane surowce: <span class="commodity1">[[${commodity1.name}]]</span><span> i </span><span class="commodity2">[[${commodity2.name}]]</span>
+        </h2>
 
         <div id="myChart"></div>
-        <th:block th:if="${#lists.size(forecasts) > 0}">
-
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Forecast Value</th>
-                    <!-- Dodaj inne nagłówki, jeśli są dostępne -->
-                </tr>
-                </thead>
-                <tbody>
-                <!-- Iteruj przez przewidywania i wyświetl wiersze tabeli -->
-                <tr th:each="forecast : ${forecasts}">
-                    <td th:text="${forecast.forecastDate}"></td>
-                    <td th:text="${forecast.forecastValue}"></td>
-                    <!-- Dodaj inne komórki, jeśli są dostępne -->
-                </tr>
-                </tbody>
-            </table>
-        </th:block>
-
-
     </main>
 
 </section>
-
 <script th:inline="javascript">
-    let forecastDates = [[${forecastDates}]];
-    let forecastValues = [[${forecastValues}]];
+    function validateForm() {
+        let commodity1 = document.getElementById("commodity1").value;
+        let commodity2 = document.getElementById("commodity2").value;
+
+        if (commodity1 === commodity2) {
+            alert("Proszę wybrać różne surowce.");
+            return false; // Uniemożliwia wysłanie formularza
+        }
+
+        return true; // Pozwala wysłać formularz
+    }
     let rawDates = [[${dates}]];
     let values = [[${values}]];
-    // Przygotuj dane do wykresu
+    let rawDates2 = [[${dates2}]];
+    let values2 = [[${values2}]];
     let seriesData = [];
+    let commodity1Name = [[${commodity1?.name ?: 'Brak nazwy'}]];
+    let commodity2Name = [[${commodity2?.name ?: 'Brak nazwy'}]];
     for (let i = 0; i < rawDates.length; i++) {
         seriesData.push([new Date(rawDates[i]).getTime(), values[i]]);
     }
 
-    let forecastData = [];
-    for (let i = 0; i < forecastDates.length; i++) {
-        forecastData.push([new Date(forecastDates[i]).getTime(), forecastValues[i]]);
+    let seriesData2 = [];
+    for (let i = 0; i < rawDates2.length; i++) {
+        seriesData2.push([new Date(rawDates2[i]).getTime(), values2[i]]);
     }
 
-    // Utwórz obiekt konfiguracyjny dla wykresu
     let chartOptions = {
         chart: {
             type: 'line',
@@ -190,26 +192,15 @@
             valueDecimals: 2,
             decimalPoint: ","
         },
-        series: [
-            {
-                name: 'Ceny surowca',
-                data: seriesData,
-            },
-            {
-                name: 'Prognozowane ceny surowca',
-                data: forecastData,
-                color: 'orange', // Kolor dla wykresu prognozowanego
-            }
-        ],
-        navigator: {
-            enabled: true,
-            series: {
-                data: seriesData,
-            },
-        },
+        series: [{
+            name: commodity1Name,
+            data: seriesData,
+        }, {
+            name: commodity2Name,
+            data: seriesData2,
+        }],
         rangeSelector: {
-
-            selected: 3,
+            selected: 3
         },
         exporting: {
             buttons: {
@@ -264,7 +255,7 @@
     // Utwórz wykres na podstawie konfiguracji
     let chart = Highcharts.stockChart('myChart', chartOptions);
 </script>
-<script th:inline="javascript" src="/app.js"></script>
-</body>
 
+<script src="app.js"></script>
+</body>
 </html>

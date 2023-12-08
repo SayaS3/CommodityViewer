@@ -1,4 +1,4 @@
-package com.example.demo.Commodity;
+package com.example.CommodityViewer.Commodity;
 
 public enum CommodityType {
     ROPA("baryłka", "USD"),
@@ -13,7 +13,9 @@ public enum CommodityType {
     SOJA("korzec", "USc"),
     PALLAD("uncja", "USD"),
     RZEPAK("tona", "USD"),
-    KAWA("funt", "USc");
+    KAWA("funt", "USc"),
+    KUKURYDZA("buszel","USD");
+
 
     private String unit;
     private String currency;
@@ -33,5 +35,6 @@ public enum CommodityType {
     public String getCurrency() {
         return currency;
     }
+
 }
 

@@ -1,4 +1,4 @@
-package com.example.demo.Commodity;
+package com.example.CommodityViewer.Commodity;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

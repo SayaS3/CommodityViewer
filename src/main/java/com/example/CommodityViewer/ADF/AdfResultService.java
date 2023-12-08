@@ -1,4 +1,4 @@
-package com.example.demo.ADF;
+package com.example.CommodityViewer.ADF;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

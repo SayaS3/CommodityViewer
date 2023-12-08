@@ -1,4 +1,4 @@
-package com.example.demo.FORECAST;
+package com.example.CommodityViewer.FORECAST;
 
 import jakarta.persistence.*;
 
@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 
 @Entity
-@Table(name = "forecasts")
+@Table(name = "holtwinters")
 public class Forecast {
 
     @Id

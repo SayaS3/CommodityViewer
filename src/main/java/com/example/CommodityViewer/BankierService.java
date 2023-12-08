@@ -1,7 +1,7 @@
-package com.example.demo;
+package com.example.CommodityViewer;
 
 
-import com.example.demo.Commodity.*;
+import com.example.CommodityViewer.Commodity.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,13 +30,13 @@ public class BankierService {
 
     @Autowired
     private DataPointRepository dataPointRepository;
+
     @PostConstruct
     public void initializeData() {
         fetchDataAndSave();
     }
+
     public void fetchDataAndSave() {
-        LocalDate currentDate = LocalDate.now();
-        DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
         for (CommodityType commodityType : CommodityType.values()) {
             Optional<CommodityEntity> existingCommodityOptional = commodityRepository.findByName(commodityType.name());
 
@@ -51,66 +51,62 @@ public class BankierService {
                 fetchAndSaveData(commodityType, null);
             }
         }
-
     }
+
     private boolean isWorkingDay() {
         LocalDate currentDate = LocalDate.now();
         DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
-
-        // Załóżmy, że poniedziałek-piątek są dniami roboczymi
         return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
     }
+
     private void fetchAndSaveData(CommodityType commodityType, CommodityEntity existingCommodity) {
-
         String fullUrl = buildUrlForCommodity(commodityType);
-
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ApiResponse> response = restTemplate.getForEntity(fullUrl, ApiResponse.class);
-
         ApiResponse apiResponse = response.getBody();
-
+        List<DataPointEntity> dataPoints = new ArrayList<>();
         if (apiResponse != null && !apiResponse.getMain().isEmpty()) {
-            CommodityEntity commodityEntity;
-
-            if (existingCommodity != null) {
-                commodityEntity = existingCommodity;
-            } else {
-                commodityEntity = new CommodityEntity();
-                commodityEntity.setName(commodityType.name());
-            }
-
-            CommodityEntity savedCommodity = commodityRepository.save(commodityEntity);
-            List<DataPointEntity> dataPoints = new ArrayList<>();
+            CommodityEntity savedCommodity = saveOrUpdateCommodity(commodityType, existingCommodity);
 
             Date lastSavedDataTimestamp = getLastSavedDataTimestamp(savedCommodity);
 
             for (List<Number> dataPoint : apiResponse.getMain()) {
                 Date dataPointTimestamp = new Date((long) dataPoint.get(0));
-                // Sprawdź, czy data punktu danych jest nowsza niż ostatni zapisany punkt danych
-                if (dataPointTimestamp.after(lastSavedDataTimestamp)) {
-                    // Sprawdź, czy dzisiaj jest dniem roboczym
-                    if (isWorkingDay()) {
-                        DataPointEntity dataPointEntity = new DataPointEntity();
-                        dataPointEntity.setCommodity(savedCommodity);
-                        dataPointEntity.setTimestamp(dataPointTimestamp);
-                        dataPointEntity.setValue(((Number) dataPoint.get(1)).doubleValue());
-                        dataPoints.add(dataPointEntity);
-                        System.out.println("Dodano nowy punkt danych: " + dataPointEntity);
-                    }
+
+                if (dataPointTimestamp.after(lastSavedDataTimestamp) && (isWorkingDay() || isDatabaseEmpty(savedCommodity))) {
+                    DataPointEntity dataPointEntity = createDataPointEntity(savedCommodity, dataPointTimestamp, dataPoint);
+                    dataPoints.add(dataPointEntity);
+                    System.out.println("Dodano nowy punkt danych: " + dataPointEntity);
                 }
             }
 
-            // Zapisz tylko nowe punkty danych
             dataPointRepository.saveAll(dataPoints);
+        }
 
-            // Uruchom skrypt tylko, jeśli dodano nowe punkty danych
-            if (!dataPoints.isEmpty()) {
-                System.out.println("Uruchamiam skrypt");
-                runPythonScript();
-            }
+        if (!dataPoints.isEmpty()) {
+            System.out.println("Uruchamiam skrypt");
+            runPythonScript();
         }
     }
 
+    private CommodityEntity saveOrUpdateCommodity(CommodityType commodityType, CommodityEntity existingCommodity) {
+        CommodityEntity commodityEntity = existingCommodity != null ? existingCommodity : new CommodityEntity();
+        commodityEntity.setName(commodityType.name());
+        return commodityRepository.save(commodityEntity);
+    }
+
+    private DataPointEntity createDataPointEntity(CommodityEntity savedCommodity, Date dataPointTimestamp, List<Number> dataPoint) {
+        DataPointEntity dataPointEntity = new DataPointEntity();
+        dataPointEntity.setCommodity(savedCommodity);
+        dataPointEntity.setTimestamp(dataPointTimestamp);
+        dataPointEntity.setValue(dataPoint.get(1).doubleValue());
+        return dataPointEntity;
+    }
+
+    private boolean isDatabaseEmpty(CommodityEntity commodityEntity) {
+        List<DataPointEntity> existingDataPoints = dataPointRepository.findByCommodity(commodityEntity);
+        return existingDataPoints.isEmpty();
+    }
 
     private Date getLastSavedDataTimestamp(CommodityEntity commodity) {
         DataPointEntity lastSavedDataPoint = dataPointRepository.findTopByCommodityOrderByTimestampDesc(Optional.ofNullable(commodity));
@@ -119,16 +115,15 @@ public class BankierService {
 
     private boolean isDataUpToDate(CommodityEntity commodity) {
         DataPointEntity latestDataPoint = dataPointRepository.findTopByCommodityOrderByTimestampDesc(Optional.ofNullable(commodity));
-
         return latestDataPoint != null && isToday(latestDataPoint.getTimestamp());
     }
-
 
     private boolean isToday(Date date) {
         LocalDate currentDate = LocalDate.now();
         LocalDate dataPointDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         return currentDate.isEqual(dataPointDate);
     }
+
     public void runPythonScript() {
         try {
             File scriptFile = new File("target/classes/python/main.py");
@@ -145,15 +140,16 @@ public class BankierService {
             } else {
                 System.out.println("Plik skryptu nie istnieje w lokalizacji: " + scriptFile.getAbsolutePath());
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     private String buildUrlForCommodity(CommodityType commodityType) {
         return BANKIER_URL + commodityType.name() + "&intraday=false&type=area&max_period=true";
     }
 }
+
 
 
 

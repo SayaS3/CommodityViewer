@@ -1,4 +1,4 @@
-package com.example.demo.ADF;
+package com.example.CommodityViewer.ADF;
 
 import jakarta.persistence.*;
 

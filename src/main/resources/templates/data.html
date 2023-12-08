@@ -10,7 +10,7 @@
     <script src="https://code.highcharts.com/modules/series-label.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
-
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 </head>
 
 <section class="sidebar">
@@ -18,23 +18,36 @@
         <span class="text">CommodityViewer</span>
     </a>
 
-
     <ul class="side-menu top">
-        <li th:each="commodity : ${commodityTypes}"
-            th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
+        <li><a th:href="@{'/' + 'correlations'}"><span>Korelacje surowców</span></a></li>
+
+        <div class="commodities-label">
+            <span>Surowce</span>
+        </div>
+        <li th:each="commodity : ${commodityTypes}" th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
             <a th:href="@{'/' + ${commodity}}" class="nav-link">
                 <span th:text="${commodity == 'MIEDZ' ? 'Miedź' :
-                (commodity == 'ROPA' ? 'Ropa' :
-                 (commodity == 'SREBRO' ? 'Srebro' :(commodity == 'PLATYNA' ? 'Platyna' :
-                 (commodity == 'NIKIEL' ? 'Nikiel' :(commodity == 'CUKIER' ? 'Cukier' :
-                 (commodity == 'SOJA' ? 'Soja' : (commodity == 'PALLAD' ? 'Pallad' :
-                 (commodity == 'RZEPAK' ? 'Rzepak' : (commodity == 'KAWA' ? 'Kawa' :
-                 (commodity == 'PSZENICA' ? 'Pszenica' : (commodity == 'ZLOTO' ? 'Złoto' :
-                 (commodity == 'ALUMINIUM' ? 'Aluminium' : commodity))))))))))))}"></span>
+                    (commodity == 'ROPA' ? 'Ropa' :
+                        (commodity == 'SREBRO' ? 'Srebro' :
+                            (commodity == 'PLATYNA' ? 'Platyna' :
+                                (commodity == 'NIKIEL' ? 'Nikiel' :
+                                    (commodity == 'CUKIER' ? 'Cukier' :
+                                        (commodity == 'SOJA' ? 'Soja' :
+                                            (commodity == 'PALLAD' ? 'Pallad' :
+                                                (commodity == 'RZEPAK' ? 'Rzepak' :
+                                                    (commodity == 'KAWA' ? 'Kawa' :
+                                                        (commodity == 'PSZENICA' ? 'Pszenica' :
+                                                            (commodity == 'ZLOTO' ? 'Złoto' :
+                                                                (commodity == 'ALUMINIUM' ? 'Aluminium' :
+                                                                    (commodity == 'KUKURYDZA' ? 'Kukurydza' :
+                                                                        commodity)))))))))))))}"></span>
             </a>
+
+            <!-- Display links only for the selected commodity -->
         </li>
     </ul>
 
+    <!-- Add label "SurowcE" above commodities -->
 
 
     <ul class="side-menu">
@@ -92,10 +105,10 @@
                     <div id="myChart"></div>
                 </div>
                 <div class="commodity-stats">
-                    <label for="chartType">Wybierz typ surowca:</label>
+                    <label for="chartType">Wybierz rodzaj wykresu:</label>
                     <select id="chartType" onchange="updateChartType()">
                         <option value="line">Liniowy</option>
-                        <option value="bar">Słupkowy</option>
+                        <option value="area">Obszarowy</option>
                     </select>
                     <h4>Statystyki Surowca:</h4>
                     <table>
@@ -248,7 +261,16 @@
         document.getElementById('endDate').innerText = Highcharts.dateFormat('%e %B %Y', seriesData[seriesData.length - 1][0]);
 
     }
+    function updateChartType() {
+        var chartType = document.getElementById('chartType').value;
 
+        // Aktualizuj typ wykresu
+        chart.update({
+            chart: {
+                type: chartType
+            }
+        });
+    }
 
 </script>
 <script src="/app.js"></script>
