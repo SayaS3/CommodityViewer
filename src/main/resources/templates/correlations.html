@@ -135,6 +135,7 @@
 
 </section>
 <script th:inline="javascript">
+
     function validateForm() {
         let commodity1 = document.getElementById("commodity1").value;
         let commodity2 = document.getElementById("commodity2").value;
@@ -146,6 +147,7 @@
 
         return true; // Pozwala wysłać formularz
     }
+
     let rawDates = [[${dates}]];
     let values = [[${values}]];
     let rawDates2 = [[${dates2}]];
@@ -161,6 +163,7 @@
     for (let i = 0; i < rawDates2.length; i++) {
         seriesData2.push([new Date(rawDates2[i]).getTime(), values2[i]]);
     }
+
 
     let chartOptions = {
         chart: {

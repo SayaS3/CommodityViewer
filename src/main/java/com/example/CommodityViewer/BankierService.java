@@ -44,6 +44,8 @@ public class BankierService {
                 CommodityEntity existingCommodity = existingCommodityOptional.get();
                 if (!isDataUpToDate(existingCommodity)) {
                     fetchAndSaveData(commodityType, existingCommodity);
+                    System.out.println("Uruchamiam skrypt");
+                    runPythonScript();
                 } else {
                     System.out.println("Dane dla surowca " + commodityType + " są aktualne.");
                 }
@@ -83,10 +85,7 @@ public class BankierService {
             dataPointRepository.saveAll(dataPoints);
         }
 
-        if (!dataPoints.isEmpty()) {
-            System.out.println("Uruchamiam skrypt");
-            runPythonScript();
-        }
+
     }
 
     private CommodityEntity saveOrUpdateCommodity(CommodityType commodityType, CommodityEntity existingCommodity) {
