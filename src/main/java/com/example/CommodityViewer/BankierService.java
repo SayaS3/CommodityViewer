@@ -36,32 +36,40 @@ public class BankierService {
         fetchDataAndSave();
     }
 
+    private boolean isWorkingDay() {
+        LocalDate currentDate = LocalDate.now();
+        DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
+        return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
+    }
     public void fetchDataAndSave() {
+        List<DataPointEntity> allDataPoints = new ArrayList<>();
+
         for (CommodityType commodityType : CommodityType.values()) {
             Optional<CommodityEntity> existingCommodityOptional = commodityRepository.findByName(commodityType.name());
 
             if (existingCommodityOptional.isPresent()) {
                 CommodityEntity existingCommodity = existingCommodityOptional.get();
                 if (!isDataUpToDate(existingCommodity)) {
-                    fetchAndSaveData(commodityType, existingCommodity);
-                    System.out.println("Uruchamiam skrypt");
-                    runPythonScript();
+                    List<DataPointEntity> dataPoints = fetchAndSaveData(commodityType, existingCommodity);
+                    allDataPoints.addAll(dataPoints);
                 } else {
                     System.out.println("Dane dla surowca " + commodityType + " są aktualne.");
                 }
             } else {
-                fetchAndSaveData(commodityType, null);
+                List<DataPointEntity> dataPoints = fetchAndSaveData(commodityType, null);
+                allDataPoints.addAll(dataPoints);
             }
+        }
+
+        if (!allDataPoints.isEmpty()) {
+            System.out.println("Uruchamiam skrypt");
+            runPythonScript();
+        } else {
+            System.out.println("Brak nowych danych dla wszystkich surowców.");
         }
     }
 
-    private boolean isWorkingDay() {
-        LocalDate currentDate = LocalDate.now();
-        DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
-        return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
-    }
-
-    private void fetchAndSaveData(CommodityType commodityType, CommodityEntity existingCommodity) {
+    private List<DataPointEntity> fetchAndSaveData(CommodityType commodityType, CommodityEntity existingCommodity) {
         String fullUrl = buildUrlForCommodity(commodityType);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ApiResponse> response = restTemplate.getForEntity(fullUrl, ApiResponse.class);
@@ -85,8 +93,9 @@ public class BankierService {
             dataPointRepository.saveAll(dataPoints);
         }
 
-
+        return dataPoints;
     }
+
 
     private CommodityEntity saveOrUpdateCommodity(CommodityType commodityType, CommodityEntity existingCommodity) {
         CommodityEntity commodityEntity = existingCommodity != null ? existingCommodity : new CommodityEntity();

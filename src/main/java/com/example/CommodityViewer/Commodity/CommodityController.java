@@ -8,12 +8,10 @@ import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -55,7 +53,6 @@ public class CommodityController {
                                   Model model) {
 
         List<String> dates = new ArrayList<>();
-        List<String> dates2 = new ArrayList<>();
         List<Double> values = new ArrayList<>();
         List<Double> values2 = new ArrayList<>();
         List<String> commodityTypes = Arrays.stream(CommodityType.values())
@@ -66,27 +63,81 @@ public class CommodityController {
 
         if (selectedCommodity1 != null && selectedCommodity2 != null) {
             List<DataPointEntity> dataPoints1 = commodityService.getDataPointsForCommodity(selectedCommodity1.getName());
-            for (DataPointEntity dataPoint : dataPoints1) {
-                dates.add(String.valueOf(dataPoint.getTimestamp()));
-                values.add(dataPoint.getValue());
+            List<DataPointEntity> dataPoints2 = commodityService.getDataPointsForCommodity(selectedCommodity2.getName());
+
+            // Dopasuj wartości do wspólnych dat
+            Map<String, Double> valuesMap1 = dataPoints1.stream()
+                    .collect(Collectors.toMap(dp -> String.valueOf(dp.getTimestamp()), DataPointEntity::getValue));
+
+            for (DataPointEntity dataPoint : dataPoints2) {
+                String timestamp = String.valueOf(dataPoint.getTimestamp());
+                if (valuesMap1.containsKey(timestamp)) {
+                    dates.add(timestamp);
+                    values.add(valuesMap1.get(timestamp));
+                    values2.add(dataPoint.getValue());
+                }
             }
 
-            List<DataPointEntity> dataPoints2 = commodityService.getDataPointsForCommodity(selectedCommodity2.getName());
-            for (DataPointEntity dataPoint : dataPoints2) {
-                dates2.add(String.valueOf(dataPoint.getTimestamp()));
-                values2.add(dataPoint.getValue());
-            }
+            // Dodaj obliczenia współczynników korelacji do modelu
+            double pearsonCorrelation = calculatePearsonCorrelation(values, values2);
+            double spearmanCorrelation = calculateSpearmanCorrelation(values, values2);
+            // Zaokrąglenie do dwóch miejsc po przecinku
+            pearsonCorrelation = Math.round(pearsonCorrelation * 100.0) / 100.0;
+            spearmanCorrelation = Math.round(spearmanCorrelation * 100.0) / 100.0;
             model.addAttribute("dates", dates);
             model.addAttribute("values", values);
             model.addAttribute("commodity1", selectedCommodity1);
-            model.addAttribute("dates2", dates2);
+            model.addAttribute("dates2", dates);
             model.addAttribute("values2", values2);
             model.addAttribute("commodity2", selectedCommodity2);
             model.addAttribute("commodityTypes", commodityTypes);
             model.addAttribute("selectedCommodity", commodityTypes);
+            model.addAttribute("pearsonCorrelation", pearsonCorrelation);
+            model.addAttribute("spearmanCorrelation", spearmanCorrelation);
         }
 
         return "correlations";
+    }
+
+
+    // Metoda do obliczania współczynnika korelacji Pearsona
+    private double calculatePearsonCorrelation(List<Double> values1, List<Double> values2) {
+        PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
+
+        // Znajdź wspólne daty
+        List<Double> commonValues1 = new ArrayList<>();
+        List<Double> commonValues2 = new ArrayList<>();
+        for (int i = 0; i < values1.size(); i++) {
+            if (values2.size() > i) {
+                commonValues1.add(values1.get(i));
+                commonValues2.add(values2.get(i));
+            }
+        }
+
+        double[] array1 = commonValues1.stream().mapToDouble(Double::doubleValue).toArray();
+        double[] array2 = commonValues2.stream().mapToDouble(Double::doubleValue).toArray();
+
+        return pearsonsCorrelation.correlation(array1, array2);
+    }
+
+    // Metoda do obliczania współczynnika korelacji Spearmana
+    private double calculateSpearmanCorrelation(List<Double> values1, List<Double> values2) {
+        SpearmansCorrelation spearmansCorrelation = new SpearmansCorrelation();
+
+        // Znajdź wspólne daty
+        List<Double> commonValues1 = new ArrayList<>();
+        List<Double> commonValues2 = new ArrayList<>();
+        for (int i = 0; i < values1.size(); i++) {
+            if (values2.size() > i) {
+                commonValues1.add(values1.get(i));
+                commonValues2.add(values2.get(i));
+            }
+        }
+
+        double[] array1 = commonValues1.stream().mapToDouble(Double::doubleValue).toArray();
+        double[] array2 = commonValues2.stream().mapToDouble(Double::doubleValue).toArray();
+
+        return spearmansCorrelation.correlation(array1, array2);
     }
     @GetMapping("/{commodityType:[A-Za-z_]+}")
     public String getCleanDataPage(@PathVariable CommodityType commodityType, Model model) {

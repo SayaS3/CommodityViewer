@@ -14,9 +14,6 @@ df_commodity_data = pd.read_sql(query_commodity_data, engine)
 query_data_point = "SELECT * FROM data_points"
 df_data_point = pd.read_sql(query_data_point, engine)
 
-# Usunięcie wierszy z wartością "." w kolumnie value
-df_data_point = df_data_point[df_data_point['value'] != "."]
-
 # Konwersja kolumny value na typ float
 df_data_point['value'] = df_data_point['value'].astype(float)
 

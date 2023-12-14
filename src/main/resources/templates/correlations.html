@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Commodity Page</title>
@@ -48,18 +48,6 @@
         </li>
     </ul>
 
-    <ul class="side-menu">
-        <li>
-            <a href="#">
-                <span class="text">Ustawienia</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="logout">
-                <span class="text">Wyloguj</span>
-            </a>
-        </li>
-    </ul>
 </section>
 
 <section class="content">
@@ -76,13 +64,18 @@
         <input type="checkbox" hidden id="switch-mode" />
         <label for="switch-mode" class="switch-mode"></label>
 
-        <a href="#" class="profile">
-            <img src="/profile.png" alt="" />
-        </a>
+
+
+        <ul id="profileOptions" class="profile-options">
+            <li><a th:href="@{/login}" sec:authorize="!isAuthenticated()">Zaloguj się</a></li>
+            <li><a class="logout" th:href="@{/logout}" sec:authorize="isAuthenticated()">Wyloguj się</a></li>
+        </ul>
     </nav>
 
     <main>
         <form id="correlationForm" class="correlation-form" action="/correlations" method="post" onsubmit="return validateForm()">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
             <div class="corr-box">
                 <label for="commodity1" class="form-label">Wybierz pierwszy surowiec</label>
                 <select id="commodity1" name="commodity1" class="form-select" onchange="updateDropdown2()">
@@ -130,12 +123,35 @@
             Wybrane surowce: <span class="commodity1">[[${commodity1.name}]]</span><span> i </span><span class="commodity2">[[${commodity2.name}]]</span>
         </h2>
 
+        <div th:if="${not #strings.isEmpty(commodity1) and not #strings.isEmpty(commodity2)}">
+            <h2>Współczynniki korelacji:</h2>
+            <p><strong>Pearson's correlation:</strong> <span th:text="${pearsonCorrelation}"></span></p>
+            <p>
+                Współczynnik korelacji Pearsona mierzy siłę i kierunek liniowej zależności pomiędzy dwiema zmiennymi.
+                Wartość bliska 1 oznacza silną dodatnią korelację, wartość bliska -1 oznacza silną ujemną korelację,
+                a wartość bliska 0 oznacza brak liniowej zależności.
+            </p>
+
+            <p><strong>Spearman's correlation:</strong> <span th:text="${spearmanCorrelation}"></span></p>
+            <p>
+                Współczynnik korelacji Spearmana ocenia stopień monotonicznej zależności między dwiema zmiennymi,
+                niekoniecznie liniowej. Podobnie jak Pearson, wartość bliska 1 oznacza silną dodatnią zależność,
+                wartość bliska -1 oznacza silną ujemną zależność, a wartość bliska 0 oznacza brak monotonicznej zależności.
+            </p>
+        </div>
+        <div th:if="${not #strings.isEmpty(commodity1) and not #strings.isEmpty(commodity2)}">
+            <button class="form-button" id="toggleLogScale" onclick="toggleLogScale()">Skala logarytmiczna</button>
+        </div>
         <div id="myChart"></div>
     </main>
 
 </section>
 <script th:inline="javascript">
-
+    function toggleLogScale() {
+        chart.yAxis[0].update({
+            type: chart.yAxis[0].options.type === 'logarithmic' ? 'linear' : 'logarithmic'
+        });
+    }
     function validateForm() {
         let commodity1 = document.getElementById("commodity1").value;
         let commodity2 = document.getElementById("commodity2").value;
@@ -203,7 +219,7 @@
             data: seriesData2,
         }],
         rangeSelector: {
-            selected: 3
+            selected: 6
         },
         exporting: {
             buttons: {
@@ -255,7 +271,6 @@
             }
         }
     });
-    // Utwórz wykres na podstawie konfiguracji
     let chart = Highcharts.stockChart('myChart', chartOptions);
 </script>
 

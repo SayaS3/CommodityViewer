@@ -7,9 +7,6 @@ import jakarta.persistence.*;
 public class AdfResult {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "commodity_id")
     private Long commodityId;
 
@@ -34,13 +31,7 @@ public class AdfResult {
     public AdfResult() {
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Long getCommodityId() {
         return commodityId;

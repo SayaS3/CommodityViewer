@@ -68,5 +68,3 @@ document.addEventListener("DOMContentLoaded", function() {
   document.querySelector('.sidebar').style.visibility='visible';
   document.querySelector('.content').style.visibility='visible';
 });
-
-
