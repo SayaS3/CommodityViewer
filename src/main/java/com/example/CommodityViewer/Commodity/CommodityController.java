@@ -46,6 +46,14 @@ public class CommodityController {
 
         return "correlations";
     }
+    @GetMapping("/admin")
+    public String getAdminPage(Model model) {
+        List<String> commodityTypes = Arrays.stream(CommodityType.values())
+                .map(CommodityType::name)
+                .collect(Collectors.toList());
+        model.addAttribute("commodityTypes", commodityTypes);
+        return "admin";
+    }
 
     @PostMapping("/correlations")
     public String showCorrelation(@RequestParam("commodity1") String commodity1,

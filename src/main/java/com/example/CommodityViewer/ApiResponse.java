@@ -18,13 +18,5 @@ public class ApiResponse {
         this.main = main;
     }
 
-    public List<DataPoint> getDataPoints() {
-        List<DataPoint> dataPoints = new ArrayList<>();
-        for (List<Number> entry : main) {
-            if (entry.size() == 2) {
-                dataPoints.add(new DataPoint(new Date(entry.get(0).longValue()), entry.get(1).doubleValue()));
-            }
-        }
-        return dataPoints;
-    }
+
 }

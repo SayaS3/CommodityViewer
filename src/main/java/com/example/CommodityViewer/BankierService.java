@@ -33,8 +33,15 @@ public class BankierService {
 
     @PostConstruct
     public void initializeData() {
-        fetchDataAndSave();
+        try {
+            fetchDataAndSave();
+        } catch (Exception e) {
+            // Obsługa wyjątku, na przykład logowanie błędu
+            System.err.println("Błąd podczas pobierania danych: " + e.getMessage());
+
+        }
     }
+
 
     private boolean isWorkingDay() {
         LocalDate currentDate = LocalDate.now();

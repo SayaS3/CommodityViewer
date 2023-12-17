@@ -67,8 +67,16 @@
 
 
         <ul id="profileOptions" class="profile-options">
+
             <li><a th:href="@{/login}" sec:authorize="!isAuthenticated()">Zaloguj się</a></li>
             <li><a class="logout" th:href="@{/logout}" sec:authorize="isAuthenticated()">Wyloguj się</a></li>
+
+        </ul>
+        <ul id="adminOptions" class="profile-options" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+            <li >
+                <a th:href="@{/admin}">Panel admina</a>
+            </li>
+
         </ul>
     </nav>
 

@@ -1,5 +1,6 @@
 package com.example.CommodityViewer.config.security;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,6 +31,7 @@ public class CustomSecurityConfig {
                         .hasAnyRole(ADMIN_ROLE)
                         .anyRequest().permitAll()
                 )
+
                 .formLogin(login -> login
                         .loginPage("/login")
                         .permitAll()

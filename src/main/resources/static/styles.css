@@ -217,7 +217,7 @@ body.dark main {
   height: 36px;
 }
 .mc-form-message {
-  color: #ffc107;
+  color: var(--blue);
   text-align: center;
 }
 /* Styling for the labels */

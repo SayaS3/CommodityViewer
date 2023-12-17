@@ -24,33 +24,19 @@ df_data_point['timestamp'] = pd.to_datetime(df_data_point['timestamp'])
 df_data_point.set_index('timestamp', inplace=True)
 
 
-def delete_previous_adf_results(commodity_id):
-    engine = create_engine('mysql+mysqlconnector://root:bazahaslo@localhost/commodity')
+def delete_previous_adf_results(engine, commodity_id):
     with engine.connect() as connection:
-        trans = connection.begin()  # Rozpocznij transakcję
+        trans = connection.begin()
         try:
             connection.execute(text("DELETE FROM adf_results WHERE commodity_id = :commodity_id"), {'commodity_id': commodity_id})
-            trans.commit()  # Zatwierdź transakcję
-
+            trans.commit()
         except Exception as e:
-            trans.rollback()  # Wycofaj transakcję w przypadku błędu
+            trans.rollback()
 
-
-def connect_to_database():
-    try:
-        engine = create_engine('mysql+mysqlconnector://root:bazahaslo@localhost/commodity')
-        return engine
-    except Exception as e:
-        print(f"Error connecting to the database: {e}")
-        return None
-
-
-def adf_test(series, commodity_id):
+def adf_test(engine, series, commodity_id):
     try:
         result = adfuller(series)
         is_stationary = result[1] <= 0.05
-
-        engine = connect_to_database()
 
         if engine:
             data = {
@@ -71,34 +57,29 @@ def adf_test(series, commodity_id):
     except Exception as e:
         print(f"Error in ADF test: {e}")
 
-
-def delete_previous_forecasts(commodity_id):
-    engine = create_engine('mysql+mysqlconnector://root:bazahaslo@localhost/commodity')
+def delete_previous_forecasts(engine, commodity_id):
     with engine.connect() as connection:
-        trans = connection.begin()  # Rozpocznij transakcję
+        trans = connection.begin()
         try:
             result = connection.execute(text("DELETE FROM holtwinters WHERE commodity_id = :commodity_id"),
                                         {"commodity_id": commodity_id})
-            trans.commit()  # Zatwierdź transakcję
+            trans.commit()
         except Exception as e:
-            trans.rollback()  # Wycofaj transakcję w przypadku błędu
+            trans.rollback()
 
-
-def save_forecast_to_db(commodity_id, forecast):
-    engine = create_engine('mysql+mysqlconnector://root:bazahaslo@localhost/commodity')
+def save_forecast_to_db(engine, commodity_id, forecast):
     with engine.connect() as connection:
-        trans = connection.begin()  # Rozpocznij transakcję
+        trans = connection.begin()
         try:
             for date, value in forecast.items():
                 connection.execute(text(
                     "INSERT INTO holtwinters (commodity_id, forecast_date, forecast_value) VALUES (:commodity_id, :forecast_date, :forecast_value)"),
                     {"commodity_id": commodity_id, "forecast_date": date, "forecast_value": value})
-            trans.commit()  # Zatwierdź transakcję
+            trans.commit()
         except Exception as e:
-            trans.rollback()  # Wycofaj transakcję w przypadku błędu
+            trans.rollback()
 
-
-def holt_winters_forecast(series):
+def holt_winters_forecast(engine, series):
     try:
         if not isinstance(series, pd.Series) or series.empty:
             raise ValueError("Input series must be a non-empty pandas Series.")
@@ -107,12 +88,10 @@ def holt_winters_forecast(series):
         model_fit = model.fit()
         forecast = model_fit.forecast(steps=12)
 
-        # Pobierz ostatnią dostępną datę
         last_date = series.index[-1]
 
         date_range = pd.date_range(start=last_date + pd.offsets.Day(1), periods=12, freq='D')
 
-        # Ustaw zakres dat jako indeks dla prognozy
         forecast.index = date_range
 
         return forecast
@@ -121,20 +100,19 @@ def holt_winters_forecast(series):
         print(f"An error occurred: {e}")
         return None
 
-
 # Wykonaj test ADF i prognozowanie dla surowców
 for commodity_id in df_commodity_data['id']:
     series = df_data_point[df_data_point['commodity_id'] == commodity_id]['value']
 
     # Usuń poprzednie wyniki dla tego surowca
-    delete_previous_adf_results(commodity_id)
-    adf_test(series, commodity_id)
+    delete_previous_adf_results(engine, commodity_id)
+    adf_test(engine, series, commodity_id)
 
     # Usuń stare prognozy
-    delete_previous_forecasts(commodity_id)
-    forecast = holt_winters_forecast(series)
+    delete_previous_forecasts(engine, commodity_id)
+    forecast = holt_winters_forecast(engine, series)
     # Zapisz nowe prognozy
-    save_forecast_to_db(commodity_id, forecast)
+    save_forecast_to_db(engine, commodity_id, forecast)
 
 # Zamknięcie połączenia z bazą danych
 engine.dispose()

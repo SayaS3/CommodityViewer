@@ -32,7 +32,6 @@ public class AdfResult {
     }
 
 
-
     public Long getCommodityId() {
         return commodityId;
     }

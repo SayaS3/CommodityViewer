@@ -7,7 +7,7 @@
   <link rel="stylesheet" type="text/css" href="/styles.css">
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 
-  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
@@ -22,8 +22,7 @@
     <div class="commodities-label">
       <span>Surowce</span>
     </div>
-    <li th:each="commodity : ${commodityTypes}"
-        th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
+    <li th:each="commodity : ${commodityTypes}" th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
       <a th:href="@{'/' + ${commodity}}" class="nav-link">
                 <span th:text="${commodity == 'MIEDZ' ? 'Miedź' :
                     (commodity == 'ROPA' ? 'Ropa' :
@@ -46,7 +45,6 @@
     </li>
 
   </ul>
-
 
 </section>
 
@@ -80,23 +78,11 @@
     </ul>
   </nav>
 
-  <main class="main-content">
-    <p th:text="${emailExistsError}" class="mc-form-message" style="color: red;">
-      ${emailExistsError}
-    </p>
-    <form action="#" th:action="@{/registration}" method="post" class="mc-form" th:object="${user}">
-      <label for="email">Adres email</label>
-      <input id="email" type="email" placeholder="nazwa użytkownika" th:field="*{email}">
-      <label for="password">Hasło</label>
-      <input id="password" placeholder="hasło" type="password" th:field="*{password}">
-      <button class="form-button" type="submit">Zarejestruj się</button>
-    </form>
-
+  <main>
+<h1>PANEL ADMINA</h1>
   </main>
 </section>
 
 <script src="app.js"></script>
 </body>
 </html>
-
-
