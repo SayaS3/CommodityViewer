@@ -30,7 +30,6 @@ prognozowania.
 
 1. Uruchom aplikację Java, korzystając z dostępnego narzędzia budującego (Maven).
 
-2. Uruchom skrypt Pythona `main.py`, aby przeprowadzić testy statystyczne i prognozowanie.
 
 ## Opis funkcji
 
