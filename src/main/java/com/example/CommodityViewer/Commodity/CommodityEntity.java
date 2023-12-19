@@ -39,4 +39,13 @@ public class CommodityEntity {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "CommodityEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", dataPoints=" + dataPoints +
+                '}';
+    }
 }

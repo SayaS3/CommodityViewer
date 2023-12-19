@@ -35,17 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-
-window.addEventListener("resize", () => {
-  if (window.innerWidth > 576) {
-    searchFrom.classList.remove("hide");
-    sideBar.classList.remove("hide"); // Usuń klasę "hide"
-  }
-  if (window.innerWidth < 768) {
-    sideBar.classList.add("hide");
-  }
-});
-
 if (window.innerWidth < 768) {
   sideBar.classList.add("hide");
 }

@@ -59,7 +59,6 @@ public class CommodityController {
     public String showCorrelation(@RequestParam("commodity1") String commodity1,
                                   @RequestParam("commodity2") String commodity2,
                                   Model model) {
-
         List<String> dates = new ArrayList<>();
         List<Double> values = new ArrayList<>();
         List<Double> values2 = new ArrayList<>();
@@ -75,7 +74,11 @@ public class CommodityController {
 
             // Dopasuj wartości do wspólnych dat
             Map<String, Double> valuesMap1 = dataPoints1.stream()
-                    .collect(Collectors.toMap(dp -> String.valueOf(dp.getTimestamp()), DataPointEntity::getValue));
+                    .collect(Collectors.toMap(
+                            dp -> String.valueOf(dp.getTimestamp()),
+                            DataPointEntity::getValue,
+                            (existing, replacement) -> existing // Handle duplicates by keeping the existing value
+                    ));
 
             for (DataPointEntity dataPoint : dataPoints2) {
                 String timestamp = String.valueOf(dataPoint.getTimestamp());
@@ -148,7 +151,7 @@ public class CommodityController {
         return spearmansCorrelation.correlation(array1, array2);
     }
     @GetMapping("/{commodityType:[A-Za-z_]+}")
-    public String getCleanDataPage(@PathVariable CommodityType commodityType, Model model) {
+    public String getDataPage(@PathVariable CommodityType commodityType, Model model) {
 
         List<String> commodityTypes = Arrays.stream(CommodityType.values())
                 .map(CommodityType::name)

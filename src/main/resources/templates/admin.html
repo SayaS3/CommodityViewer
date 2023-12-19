@@ -11,72 +11,11 @@
 </head>
 
 <body>
-<section class="sidebar">
-  <a href="/" class="logo">
-    <span class="text">CommodityViewer</span>
-  </a>
-
-  <ul class="side-menu top">
-    <li><a th:href="@{'/' + 'correlations'}"><span>Korelacje surowców</span></a></li>
-
-    <div class="commodities-label">
-      <span>Surowce</span>
-    </div>
-    <li th:each="commodity : ${commodityTypes}" th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
-      <a th:href="@{'/' + ${commodity}}" class="nav-link">
-                <span th:text="${commodity == 'MIEDZ' ? 'Miedź' :
-                    (commodity == 'ROPA' ? 'Ropa' :
-                        (commodity == 'SREBRO' ? 'Srebro' :
-                            (commodity == 'PLATYNA' ? 'Platyna' :
-                                (commodity == 'NIKIEL' ? 'Nikiel' :
-                                    (commodity == 'CUKIER' ? 'Cukier' :
-                                        (commodity == 'SOJA' ? 'Soja' :
-                                            (commodity == 'PALLAD' ? 'Pallad' :
-                                                (commodity == 'RZEPAK' ? 'Rzepak' :
-                                                    (commodity == 'KAWA' ? 'Kawa' :
-                                                        (commodity == 'PSZENICA' ? 'Pszenica' :
-                                                            (commodity == 'ZLOTO' ? 'Złoto' :
-                                                                (commodity == 'ALUMINIUM' ? 'Aluminium' :
-                                                                    (commodity == 'KUKURYDZA' ? 'Kukurydza' :
-                                                                        commodity)))))))))))))}"></span>
-      </a>
-
-
-    </li>
-
-  </ul>
-
+<section th:replace="~{fragments :: sidebar}">
 </section>
 
 <section class="content">
-  <nav>
-    <form action="#">
-      <div class="form-input">
-        <input type="search" placeholder="search..." />
-        <button class="search-btn">
-          <i class="fas fa-search search-icon"></i>
-        </button>
-      </div>
-    </form>
-
-    <input type="checkbox" hidden id="switch-mode" />
-    <label for="switch-mode" class="switch-mode"></label>
-
-
-
-    <ul id="profileOptions" class="profile-options">
-
-      <li><a th:href="@{/login}" sec:authorize="!isAuthenticated()">Zaloguj się</a></li>
-      <li><a class="logout" th:href="@{/logout}" sec:authorize="isAuthenticated()">Wyloguj się</a></li>
-
-    </ul>
-    <ul id="adminOptions" class="profile-options" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-      <li >
-        <a th:href="@{/admin}">Panel admina</a>
-      </li>
-
-    </ul>
-  </nav>
+  <nav th:replace="~{fragments :: nav}"></nav>
 
   <main>
 <h1>PANEL ADMINA</h1>

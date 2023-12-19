@@ -167,6 +167,7 @@ body.dark main {
   background: var(--light);
   padding: 0 24px;
   display: flex;
+  justify-content: flex-end;
   align-items: center;
   gap: 24px;
   font-family: var(--lato);
@@ -766,5 +767,13 @@ input {
   .content nav .nav-link {
     display: none;
   }
+}
+@media (max-width: 1800px) {
+
+  .chart-and-stats{
+    display: flex;
+    flex-direction: column;
+  }
+
 }
 
