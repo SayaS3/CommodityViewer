@@ -11,7 +11,7 @@ public class CommodityEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name") // This annotation is used to specify the column name in the database
+    @Column(name = "name")
     private String name;
     @OneToMany(mappedBy = "commodity")
     private List<DataPointEntity> dataPoints;
@@ -40,12 +40,5 @@ public class CommodityEntity {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return "CommodityEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", dataPoints=" + dataPoints +
-                '}';
-    }
+
 }

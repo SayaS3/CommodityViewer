@@ -20,9 +20,6 @@ public enum CommodityType {
     private String unit;
     private String currency;
 
-    CommodityType() {
-    }
-
     CommodityType(String unit, String currency) {
         this.unit = unit;
         this.currency = currency;

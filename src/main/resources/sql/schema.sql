@@ -20,8 +20,6 @@ CREATE TABLE  IF NOT EXISTS `commodities` (
 );
 
 
-
-
 CREATE TABLE  IF NOT EXISTS `data_points` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `commodity_id` bigint DEFAULT NULL,

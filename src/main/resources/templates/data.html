@@ -12,7 +12,7 @@
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 </head>
-
+<body>
 <section th:replace="~{fragments :: sidebar}">
 </section>
 <section class="content">
@@ -142,7 +142,7 @@
             },
         },
         rangeSelector: {
-            selected: 3, // Domyślny zakres wykresu
+            selected: 5, // Domyślny zakres wykresu
         },
         exporting: {
             buttons: {
@@ -178,10 +178,10 @@
     if (seriesData.length > 0) {
         // Znajdź minimum, maksimum i średnią
         let minValue = Math.min(...seriesData.map(point => point[1]));
-        let minIndex = seriesData.findIndex(point => point[1] === minValue);
+
 
         let maxValue = Math.max(...seriesData.map(point => point[1]));
-        let maxIndex = seriesData.findIndex(point => point[1] === maxValue);
+
 
 
         let avgValue = seriesData.reduce((sum, point) => sum + point[1], 0) / seriesData.length;

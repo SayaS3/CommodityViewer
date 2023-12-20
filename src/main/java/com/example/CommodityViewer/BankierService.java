@@ -7,11 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -69,7 +66,7 @@ public class BankierService {
         }
 
         if (!allDataPoints.isEmpty()) {
-            System.out.println("Uruchamiam skrypt");
+            System.out.println("Uruchamiam skrypt...");
             runPythonScript();
         } else {
             System.out.println("Brak nowych danych dla wszystkich surowców.");
@@ -141,25 +138,25 @@ public class BankierService {
 
     public void runPythonScript() {
         try {
-            File scriptFile = new File("target/classes/python/main.py");
+            File scriptFile = new File("src/main/resources/python/main.py");
             if (scriptFile.exists()) {
+                File outputLogFile = new File("target/classes/python/output.log");
+
                 ProcessBuilder processBuilder = new ProcessBuilder("python", scriptFile.getAbsolutePath());
                 processBuilder.redirectErrorStream(true);
+                processBuilder.redirectOutput(outputLogFile);
+
                 Process process = processBuilder.start();
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        System.out.println(line);
-                    }
-                }
+                process.waitFor();
+
+                System.out.println("Skrypt wykonany");
             } else {
                 System.out.println("Plik skryptu nie istnieje w lokalizacji: " + scriptFile.getAbsolutePath());
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
-
     private String buildUrlForCommodity(CommodityType commodityType) {
         return BANKIER_URL + commodityType.name() + "&intraday=false&type=area&max_period=true";
     }
