@@ -29,7 +29,8 @@
 
         <div class="commodity-details">
             <a th:href="@{'/' + ${selectedCommodity.name} + '/testadf'}" class="btn">Test ADF</a>
-            <a th:href="@{'/' + ${selectedCommodity.name} + '/forecasts'}" class="btn">Prognozy</a>
+            <a th:href="@{'/' + ${selectedCommodity.name} + '/holtwinters'}" class="btn">Holt-Winters</a>
+            <a th:href="@{'/' + ${selectedCommodity.name} + '/sarimax'}" class="btn">SARIMAX</a>
             <h3 th:text="${selectedCommodity.name}">Nazwa Surowca</h3>
 
             <p th:text="${'Interwał: dzienny'}"></p>
@@ -39,14 +40,22 @@
         </div>
         <div class="holt-description">
             <p>
-                Model prognozowania: Holt-Winters Forecast. Jest to zaawansowany model szeregów czasowych, wykorzystywany
-                do prognozowania przyszłych cen surowców na podstawie ich historycznych danych. Model ten integruje trzy
-                składowe: poziom (level), trend i sezonowość.
-                Składowa poziomu odzwierciedla średnią wartość surowca, trend prognozuje kierunek i nachylenie zmian cen,
-                natomiast składowa sezonowości uwzględnia cykliczne wzorce, które mogą występować w określonych okresach czasu,
-                na przykład sezonowość roczna lub kwartalna
+                Model prognozowania: Holt-Winters Forecast. To zaawansowany model
+                analizy szeregów czasowych, specjalnie stworzony do prognozowania przyszłych cen surowców na podstawie ich historycznych danych.
+                Model ten integruje trzy kluczowe składowe, które umożliwiają dokładne prognozowanie:
+            </p>
+            <ul>
+                <li><strong>Poziom (Level):</strong> Składowa poziomu odzwierciedla średnią wartość surowca.
+                    Jest to punkt odniesienia, wokół którego oscylują wartości szeregów czasowych.</li>
+                <li><strong>Trend:</strong> Składowa trendu prognozuje kierunek i nachylenie zmian cen surowca. Pozwala zidentyfikować ogólny ruch cenowy.</li>
+                <li><strong>Sezonowość:</strong> Składowa sezonowości uwzględnia cykliczne wzorce,
+                    które mogą występować w określonych okresach czasu. Może to obejmować sezonowość roczną, kwartalną lub inne okresy.</li>
+            </ul>
+            <p>
+                Holt-Winters Forecast to narzędzie, które znajduje zastosowanie szczególnie w prognozowaniu cen surowców, gdzie istotne są zarówno trendy jak i sezonowość. Dzięki kompleksowej analizie składowych model ten oferuje bardziej precyzyjne prognozy, co wspomaga podejmowanie decyzji biznesowych.
             </p>
         </div>
+
 
         <div id="myChart"></div>
         <th:block th:if="${#lists.size(forecasts) > 0}">

@@ -31,7 +31,7 @@ public class BankierService {
     @PostConstruct
     public void initializeData() {
         try {
-            fetchDataAndSave();
+            checkAndUpdateDataAndRunScript();
         } catch (Exception e) {
             // Obsługa wyjątku, na przykład logowanie błędu
             System.err.println("Błąd podczas pobierania danych: " + e.getMessage());
@@ -39,14 +39,8 @@ public class BankierService {
         }
     }
 
-
-    private boolean isWorkingDay() {
-        LocalDate currentDate = LocalDate.now();
-        DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
-        return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
-    }
-    public void fetchDataAndSave() {
-        List<DataPointEntity> allDataPoints = new ArrayList<>();
+    public void checkAndUpdateDataAndRunScript() {
+        boolean hasNewData = false;
 
         for (CommodityType commodityType : CommodityType.values()) {
             Optional<CommodityEntity> existingCommodityOptional = commodityRepository.findByName(commodityType.name());
@@ -54,18 +48,18 @@ public class BankierService {
             if (existingCommodityOptional.isPresent()) {
                 CommodityEntity existingCommodity = existingCommodityOptional.get();
                 if (!isDataUpToDate(existingCommodity)) {
-                    List<DataPointEntity> dataPoints = fetchAndSaveData(commodityType, existingCommodity);
-                    allDataPoints.addAll(dataPoints);
+                    fetchAndSaveData(commodityType, existingCommodity);
+                    hasNewData = true;
                 } else {
                     System.out.println("Dane dla surowca " + commodityType + " są aktualne.");
                 }
             } else {
-                List<DataPointEntity> dataPoints = fetchAndSaveData(commodityType, null);
-                allDataPoints.addAll(dataPoints);
+                fetchAndSaveData(commodityType, null);
+                hasNewData = true;
             }
         }
 
-        if (!allDataPoints.isEmpty()) {
+        if (hasNewData) {
             System.out.println("Uruchamiam skrypt...");
             runPythonScript();
         } else {
@@ -73,7 +67,7 @@ public class BankierService {
         }
     }
 
-    private List<DataPointEntity> fetchAndSaveData(CommodityType commodityType, CommodityEntity existingCommodity) {
+    private void fetchAndSaveData(CommodityType commodityType, CommodityEntity existingCommodity) {
         String fullUrl = buildUrlForCommodity(commodityType);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ApiResponse> response = restTemplate.getForEntity(fullUrl, ApiResponse.class);
@@ -97,7 +91,6 @@ public class BankierService {
             dataPointRepository.saveAll(dataPoints);
         }
 
-        return dataPoints;
     }
 
 
@@ -114,7 +107,11 @@ public class BankierService {
         dataPointEntity.setValue(dataPoint.get(1).doubleValue());
         return dataPointEntity;
     }
-
+    private boolean isWorkingDay() {
+        LocalDate currentDate = LocalDate.now();
+        DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
+        return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
+    }
     private boolean isDatabaseEmpty(CommodityEntity commodityEntity) {
         List<DataPointEntity> existingDataPoints = dataPointRepository.findByCommodity(commodityEntity);
         return existingDataPoints.isEmpty();
@@ -127,13 +124,14 @@ public class BankierService {
 
     private boolean isDataUpToDate(CommodityEntity commodity) {
         DataPointEntity latestDataPoint = dataPointRepository.findTopByCommodityOrderByTimestampDesc(Optional.ofNullable(commodity));
-        return latestDataPoint != null && isToday(latestDataPoint.getTimestamp());
+        return latestDataPoint != null && isAfterOrEqualYesterday(latestDataPoint.getTimestamp());
     }
 
-    private boolean isToday(Date date) {
-        LocalDate currentDate = LocalDate.now();
+
+    private boolean isAfterOrEqualYesterday(Date date) {
+        LocalDate yesterday = LocalDate.now().minusDays(1);
         LocalDate dataPointDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        return currentDate.isEqual(dataPointDate);
+        return !dataPointDate.isBefore(yesterday);
     }
 
     public void runPythonScript() {

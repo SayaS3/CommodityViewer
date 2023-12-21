@@ -1,4 +1,4 @@
-package com.example.CommodityViewer.FORECAST;
+package com.example.CommodityViewer.HoltWinters;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

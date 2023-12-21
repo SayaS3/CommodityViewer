@@ -1,4 +1,4 @@
-package com.example.CommodityViewer.FORECAST;
+package com.example.CommodityViewer.HoltWinters;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

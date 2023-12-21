@@ -746,7 +746,6 @@ input {
 }
 .commodity-info {
   padding-top: 10px; /* dowolna wartość, którą chcesz zastosować od góry */
-  padding-bottom: 10px; /* dowolna wartość, którą chcesz zastosować od dołu */
   font-size: 32px; /* dowolna wartość, aby zwiększyć rozmiar tekstu */
   font-weight: bold;
 }

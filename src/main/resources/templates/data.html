@@ -27,7 +27,8 @@
 
         <div class="commodity-details">
             <a th:href="@{'/' + ${selectedCommodity.name} + '/testadf'}" class="btn">Test ADF</a>
-            <a th:href="@{'/' + ${selectedCommodity.name} + '/forecasts'}" class="btn">Prognozy</a>
+            <a th:href="@{'/' + ${selectedCommodity.name} + '/holtwinters'}" class="btn">Holt-Winters</a>
+            <a th:href="@{'/' + ${selectedCommodity.name} + '/sarimax'}" class="btn">SARIMAX</a>
             <h3 th:text="${selectedCommodity.name}">Nazwa Surowca</h3>
 
             <p th:text="${'Interwał: dzienny'}"></p>

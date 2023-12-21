@@ -2,8 +2,10 @@ package com.example.CommodityViewer.Commodity;
 
 import com.example.CommodityViewer.ADF.AdfResult;
 import com.example.CommodityViewer.ADF.AdfResultService;
-import com.example.CommodityViewer.FORECAST.Forecast;
-import com.example.CommodityViewer.FORECAST.ForecastService;
+import com.example.CommodityViewer.ARIMA.Arima;
+import com.example.CommodityViewer.ARIMA.ArimaService;
+import com.example.CommodityViewer.HoltWinters.Forecast;
+import com.example.CommodityViewer.HoltWinters.ForecastService;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,7 +25,8 @@ public class CommodityController {
 
     @Autowired
     private ForecastService forecastService;
-
+    @Autowired
+    private ArimaService arimaService;
     @Autowired
     private AdfResultService adfResultService;
 
@@ -208,7 +211,7 @@ public class CommodityController {
     }
 
 
-    @GetMapping("/{commodityType}/forecasts")
+    @GetMapping("/{commodityType}/holtwinters")
     public String getForecastsPage(@PathVariable CommodityType commodityType, Model model) {
         List<String> commodityTypes =  Arrays.stream(CommodityType.values())
                 .map(CommodityType::name)
@@ -255,12 +258,63 @@ public class CommodityController {
             model.addAttribute("forecasts", forecasts);
             model.addAttribute("selectedCommodity", selectedCommodity);
             model.addAttribute("commodityTypes", commodityTypes);
-            return "forecasts";
+            return "holtwinters";
         } else {
             return "error"; // Przekierowanie na stronę główną lub inny odpowiedni adres
         }
     }
+    @GetMapping("/{commodityType}/sarimax")
+    public String getArimaPage(@PathVariable CommodityType commodityType, Model model) {
+        List<String> commodityTypes =  Arrays.stream(CommodityType.values())
+                .map(CommodityType::name)
+                .collect(Collectors.toList());
 
+        commodityService.findCommodityByName(commodityType.name()).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
+
+        CommodityEntity selectedCommodity = commodityService.findCommodityByName(commodityType.name()).orElse(null);
+
+        List<String> dates = new ArrayList<>();
+        List<Double> values = new ArrayList<>();
+        List<String> forecastDates = new ArrayList<>();  // Dodaj listę dla dat prognoz
+        List<Double> forecastValues = new ArrayList<>();  // Dodaj listę dla wartości prognoz
+
+        commodityService.findCommodityByName(commodityType.name()).ifPresent(commodity -> {
+            model.addAttribute("selectedCommodity", commodity);
+
+            // Uzupełnij listy danymi z data_point
+            List<DataPointEntity> dataPoints = commodityService.getDataPointsForCommodity(commodity.getName());
+            for (DataPointEntity dataPoint : dataPoints) {
+                dates.add(String.valueOf(dataPoint.getTimestamp()));
+                values.add(dataPoint.getValue());
+                model.addAttribute("unit", commodityType.getUnit());
+                model.addAttribute("currency", commodityType.getCurrency());
+            }
+        });
+
+        if (selectedCommodity != null) {
+            commodityService.findCommodityByName(commodityType.name()).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
+
+            List<Arima> forecasts = arimaService.getArimabyCommodityId(selectedCommodity.getId());
+
+            // Konwersja daty na format bez godziny
+            forecasts.forEach(forecast -> {
+                forecast.setForecastDate(LocalDate.ofEpochDay(forecast.getForecastDate().toEpochDay()));
+                forecastDates.add(forecast.getForecastDate().toString());  // Dodaj daty prognoz do listy
+                forecastValues.add(forecast.getForecastValue());  // Dodaj wartości prognoz do listy
+            });
+            model.addAttribute("dates", dates);
+            model.addAttribute("values", values);
+            model.addAttribute("forecastDates", forecastDates);  // Dodaj prognozowane daty do modelu
+            model.addAttribute("forecastValues", forecastValues);  // Dodaj prognozowane wartości do modelu
+            model.addAttribute("commodityTypes", CommodityType.values());
+            model.addAttribute("forecasts", forecasts);
+            model.addAttribute("selectedCommodity", selectedCommodity);
+            model.addAttribute("commodityTypes", commodityTypes);
+            return "sarimax";
+        } else {
+            return "error"; // Przekierowanie na stronę główną lub inny odpowiedni adres
+        }
+    }
 
 
 }

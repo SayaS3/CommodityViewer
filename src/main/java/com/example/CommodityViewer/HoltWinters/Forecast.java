@@ -1,4 +1,4 @@
-package com.example.CommodityViewer.FORECAST;
+package com.example.CommodityViewer.HoltWinters;
 
 import jakarta.persistence.*;
 
