@@ -60,7 +60,7 @@ public class BankierService {
         }
 
         if (hasNewData) {
-            System.out.println("Uruchamiam skrypt...");
+            System.out.println("Uruchamiam skrypt i obliczam dane, moze to chwile potrwac...");
             runPythonScript();
         } else {
             System.out.println("Brak nowych danych dla wszystkich surowców.");

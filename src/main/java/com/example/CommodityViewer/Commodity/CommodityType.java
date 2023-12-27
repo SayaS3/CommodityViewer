@@ -14,7 +14,8 @@ public enum CommodityType {
     PALLAD("uncja", "USD"),
     RZEPAK("tona", "USD"),
     KAWA("funt", "USc"),
-    KUKURYDZA("buszel","USD");
+    KUKURYDZA("buszel","USD"),
+    KAKAO("tona","GBP");
 
 
     private String unit;
@@ -33,5 +34,12 @@ public enum CommodityType {
         return currency;
     }
 
+    @Override
+    public String toString() {
+        return name() + "{" +
+                "unit='" + unit + '\'' +
+                ", currency='" + currency + '\'' +
+                '}';
+    }
 }
 

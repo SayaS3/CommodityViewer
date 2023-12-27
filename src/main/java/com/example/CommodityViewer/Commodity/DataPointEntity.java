@@ -26,7 +26,9 @@ private Long id;
     public void setId(Long id) {
         this.id = id;
     }
-
+    public String getCommodityName() {
+        return commodity != null ? commodity.getName() : null;
+    }
     public CommodityEntity getCommodity() {
         return commodity;
     }

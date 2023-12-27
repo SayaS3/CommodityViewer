@@ -41,8 +41,9 @@
                                                         (commodity == 'PSZENICA' ? 'Pszenica' :
                                                             (commodity == 'ZLOTO' ? 'Złoto' :
                                                                 (commodity == 'ALUMINIUM' ? 'Aluminium' :
-                                                                    (commodity == 'KUKURYDZA' ? 'Kukurydza' :
-                                                                        commodity)))))))))))))}"></option>
+                                                                    (commodity == 'KAKAO' ? 'Kakao' :
+                                                                     (commodity == 'KUKURYDZA' ? 'Kukurydza' :
+                                                                        commodity))))))))))))))}"></option>
                 </select>
             </div>
             <div class="corr-box">
@@ -61,8 +62,9 @@
                                                         (commodity == 'PSZENICA' ? 'Pszenica' :
                                                             (commodity == 'ZLOTO' ? 'Złoto' :
                                                                 (commodity == 'ALUMINIUM' ? 'Aluminium' :
+                                                                 (commodity == 'KAKAO' ? 'Kakao' :
                                                                     (commodity == 'KUKURYDZA' ? 'Kukurydza' :
-                                                                        commodity)))))))))))))}" th:selected="${commodity == 'ZLOTO'}"></option>
+                                                                        commodity))))))))))))))}" th:selected="${commodity == 'ZLOTO'}"></option>
                 </select>
             </div>
             <button type="submit" class="form-button">Korelacja</button>

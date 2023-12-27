@@ -5,9 +5,6 @@
     <meta charset="UTF-8">
     <title>Commodity Page</title>
     <link rel="stylesheet" type="text/css" href="/styles.css">
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
-
-    <link rel="stylesheet" href="styles.css" />
   </head>
 
   <body>
@@ -17,8 +14,83 @@
   <section class="content">
     <nav th:replace="~{fragments :: nav}"></nav>
 
-    <main>
+    <main class="flex-container">
+      <!-- Sekcja z informacjami ogólnymi -->
+      <section>
+        <h2>Surowce i Inwestowanie</h2>
+        <p>
+          Surowce to surowe materiały wydobywane
+          z ziemi, takie jak metale, ropa naftowa czy rolnicze produkty.
+        </p>
+        <p>
+          Inwestowanie w surowce może stanowić element zdywersyfikowanego portfela inwestycyjnego,
+          oferując potencjalne korzyści z różnicowania ryzyka.
+        </p>
+      </section>
 
+      <!-- Informacje o Surowcach -->
+      <section>
+        <h2>Rodzaje Surowców</h2>
+        <p>
+          Surowce dzielimy na kilka kategorii, takie jak:
+        <ul class="commodities-list-examples">
+          <li>Metale (np. złoto, srebro, miedź)</li>
+          <li>Energia (np. ropa naftowa, gaz)</li>
+          <li>Rośliny uprawne (np. pszenica, soja)</li>
+          <li>Inne (np. kawa, bawełna)</li>
+        </ul>
+        </p>
+        <p>
+          Każdy rodzaj surowca ma swoje unikalne cechy i podlega różnym czynnikom wpływającym na cenę.
+        </p>
+      </section>
+
+      <!-- Gdzie Inwestować -->
+      <section>
+        <h2>Gdzie Inwestować w Surowce?</h2>
+        <p>
+          Istnieje wiele platform inwestycyjnych, gdzie możesz inwestować w surowce.
+          Należy do nich:
+        <ul class="commodities-list-examples">
+          <li><a href="https://www.etoro.com/">eToro</a> - Platforma społecznościowego inwestowania.</li>
+          <li><a href="https://www.xtb.com/pl">XTB</a> - Broker oferujący dostęp do różnych rynków finansowych.</li>
+          <li><a href="https://www.plus500.pl/">Plus500</a> - Platforma CFD umożliwiająca handel surowcami.</li>
+        </ul>
+        </p>
+        <p>
+          Wybierając platformę, sprawdź opinie innych inwestorów i zwróć uwagę na dostępne instrumenty finansowe.
+        </p>
+      </section>
+
+      <!-- Dodatkowe Porady -->
+      <section>
+        <h2>Porady dotyczące Inwestowania w Surowce</h2>
+        <p>
+          Kilka porad przed rozpoczęciem inwestycji:
+        <ul class="commodities-list-examples">
+          <li>Dokładnie analizuj rynek surowców i śledź aktualne trendy.</li>
+          <li>Rozważ dywersyfikację inwestycji, aby zminimalizować ryzyko.</li>
+          <li>Śledź światowe wydarzenia, które mogą wpływać na ceny surowców.</li>
+        </ul>
+        </p>
+        <p>
+          Pamiętaj, że inwestowanie zawsze wiąże się z ryzykiem, dlatego ważne jest zachowanie ostrożności i dokładne planowanie.
+        </p>
+      </section>
+
+      <!-- Zawartość Strony -->
+      <section>
+        <h2>Zawartość Strony</h2>
+        <p>
+          Ta strona oferuje analizę cen różnych surowców. Wybierz interesujące Cię surowce z dostępnej listy,
+          a następnie skorzystaj z dostępnych modeli matematycznych, takich jak Holt-Winters czy SARIMA,
+          aby przewidzieć ich ceny w przyszłości.
+        </p>
+        <p>
+          Skorzystaj również z dostępnej korelacji między różnymi surowcami oraz testu ADF, który może pomóc
+          w identyfikacji trendów i sezonowości, co jest istotne w analizie cen surowców w kontekście inwestycji.
+        </p>
+      </section>
     </main>
   </section>
 

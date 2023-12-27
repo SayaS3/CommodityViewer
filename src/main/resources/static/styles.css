@@ -5,7 +5,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  list-style: none;
   text-decoration: none;
 }
 
@@ -37,7 +36,11 @@ body {
   overflow-x: hidden;
 
 }
-
+.commodities-list-examples {
+  list-style-type: disc; /* Ustawienie typu punktorów */
+  list-style-position: outside; /* Ustawienie pozycji punktorów na zewnątrz */
+  padding-left: 20px; /* Dodatkowy margines na lewo dla wcięcia punktorów */
+}
 body.dark {
   --light: #0c0c1e;
   --grey: #060714;
@@ -62,11 +65,14 @@ body.dark main {
 .sidebar.hide {
   width: 60px;
 }
+h2 {
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
 
 .sidebar::-webkit-scrollbar {
   display: none;
 }
-
 .sidebar .logo {
   margin-left: 6px;
   font-size: 24px;
@@ -414,7 +420,6 @@ body.dark main {
 .holt-description {
   text-align: left;
   max-width: 1600px; /* Ustaw maksymalną szerokość tekstu, dostosuj do swoich preferencji */
-
   padding-bottom: 20px;
 }
 

@@ -17,7 +17,8 @@
         <div class="commodities-label">
             <span>Surowce</span>
         </div>
-        <li th:each="commodity : ${commodityTypes}" th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
+        <li th:each="commodity : ${commodityTypes}"
+            th:class="${#strings.equals(selectedCommodity, commodity)} ? 'active' : ''">
             <a th:href="@{'/' + ${commodity}}" class="nav-link">
                 <span th:text="${commodity == 'MIEDZ' ? 'Miedź' :
                     (commodity == 'ROPA' ? 'Ropa' :
@@ -32,8 +33,9 @@
                                                         (commodity == 'PSZENICA' ? 'Pszenica' :
                                                             (commodity == 'ZLOTO' ? 'Złoto' :
                                                                 (commodity == 'ALUMINIUM' ? 'Aluminium' :
+                                                                    (commodity == 'KAKAO' ? 'Kakao' :
                                                                     (commodity == 'KUKURYDZA' ? 'Kukurydza' :
-                                                                        commodity)))))))))))))}"></span>
+                                                                        commodity))))))))))))))}"></span>
             </a>
 
         </li>
@@ -41,22 +43,22 @@
 
 
 </section>
-    <nav th:fragment="nav">
-        <input type="checkbox" hidden id="switch-mode" />
-        <label for="switch-mode" class="switch-mode"></label>
+<nav th:fragment="nav">
+    <input type="checkbox" hidden id="switch-mode"/>
+    <label for="switch-mode" class="switch-mode"></label>
 
-        <ul id="profileOptions" class="profile-options">
+    <ul id="profileOptions" class="profile-options">
 
-            <li><a th:href="@{/login}" sec:authorize="!isAuthenticated()">Zaloguj się</a></li>
-            <li><a class="logout" th:href="@{/logout}" sec:authorize="isAuthenticated()">Wyloguj się</a></li>
+        <li><a th:href="@{/login}" sec:authorize="!isAuthenticated()">Zaloguj się</a></li>
+        <li><a class="logout" th:href="@{/logout}" sec:authorize="isAuthenticated()">Wyloguj się</a></li>
 
-        </ul>
-        <ul id="adminOptions" class="profile-options" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-            <li >
-                <a th:href="@{/admin}">Panel admina</a>
-            </li>
+    </ul>
+    <ul id="adminOptions" class="profile-options" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+        <li>
+            <a th:href="@{/admin}">Panel admina</a>
+        </li>
 
-        </ul>
-    </nav>
+    </ul>
+</nav>
 </body>
 </html>
