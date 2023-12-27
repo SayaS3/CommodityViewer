@@ -12,7 +12,8 @@
     </a>
 
     <ul class="side-menu top">
-        <li><a th:href="@{'/' + 'correlations'}"><span>Korelacje surowców</span></a></li>
+        <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{'/' + 'correlations'}"  class="acces-commodity-correlations">Korelacje surowców</a>
+        <a th:if="${!#authorization.expression('isAuthenticated()')}" th:href="@{'/' + 'correlations'}" class="no-acces-commodity-correlations">Korelacje surowców</a>
 
         <div class="commodities-label">
             <span>Surowce</span>

@@ -35,9 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-if (window.innerWidth < 768) {
-  sideBar.classList.add("hide");
-}
+
 document.addEventListener("DOMContentLoaded", function() {
   document.querySelector('.sidebar').style.visibility='visible';
   document.querySelector('.content').style.visibility='visible';

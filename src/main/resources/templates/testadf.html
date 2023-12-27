@@ -22,9 +22,25 @@
             </a>
         </div>
         <div class="commodity-details">
-            <a th:href="@{'/' + ${selectedCommodity.name} + '/testadf'}" class="btn">Test ADF</a>
-            <a th:href="@{'/' + ${selectedCommodity.name} + '/holtwinters'}" class="btn">Holt-Winters</a>
-            <a th:href="@{'/' + ${selectedCommodity.name} + '/sarimax'}" class="btn">SARIMAX</a>
+            <a th:if="${#authorization.expression('isAuthenticated()')}"
+               th:href="@{'/' + ${selectedCommodity.name} + '/testadf'}"
+               class="btn">Test ADF</a>
+            <a th:if="${!#authorization.expression('isAuthenticated()')}"
+               class="disabled-btn">Test ADF</a>
+
+            <!-- Holt-Winters -->
+            <a th:if="${#authorization.expression('isAuthenticated()')}"
+               th:href="@{'/' + ${selectedCommodity.name} + '/holtwinters'}"
+               class="btn">Holt-Winters</a>
+            <a th:if="${!#authorization.expression('isAuthenticated()')}"
+               class="disabled-btn">Holt-Winters</a>
+
+            <!-- SARIMAX -->
+            <a th:if="${#authorization.expression('isAuthenticated()')}"
+               th:href="@{'/' + ${selectedCommodity.name} + '/sarimax'}"
+               class="btn">SARIMAX</a>
+            <a th:if="${!#authorization.expression('isAuthenticated()')}"
+               class="disabled-btn">SARIMAX</a>
             <h3 th:text="${selectedCommodity.name}">Nazwa Surowca</h3>
 
             <p th:text="${'Interwał: dzienny'}"></p>
