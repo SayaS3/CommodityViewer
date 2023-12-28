@@ -3,9 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Commodity Page</title>
+    <title th:text="${selectedCommodity.name}">Commodity Page</title>
     <link rel="stylesheet" type="text/css" href="/styles.css">
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 </head>
 
 <body>
@@ -95,7 +94,7 @@
             </p>
 
             <!-- Opisy dla poszczególnych kolumn -->
-            <ul class="adf-info">
+            <ul class="commodities-list-examples">
                 <li>
                     <strong>ADF Statistic:</strong> Statystyka testu Augmented Dickey-Fuller. Im niższa wartość, tym lepiej dla stacjonarności szeregu czasowego.
                 </li>

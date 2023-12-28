@@ -1,9 +1,13 @@
-package com.example.CommodityViewer.Commodity;
+package com.example.CommodityViewer.web;
 
 import com.example.CommodityViewer.ADF.AdfResult;
 import com.example.CommodityViewer.ADF.AdfResultService;
 import com.example.CommodityViewer.ARIMA.Arima;
 import com.example.CommodityViewer.ARIMA.ArimaService;
+import com.example.CommodityViewer.Commodity.CommodityEntity;
+import com.example.CommodityViewer.Commodity.CommodityService;
+import com.example.CommodityViewer.Commodity.CommodityType;
+import com.example.CommodityViewer.Commodity.DataPointEntity;
 import com.example.CommodityViewer.HoltWinters.Forecast;
 import com.example.CommodityViewer.HoltWinters.ForecastService;
 import org.springframework.ui.Model;
@@ -48,14 +52,6 @@ public class CommodityController {
         model.addAttribute("commodityTypes", commodityTypes);
 
         return "correlations";
-    }
-    @GetMapping("/admin")
-    public String getAdminPage(Model model) {
-        List<String> commodityTypes = Arrays.stream(CommodityType.values())
-                .map(CommodityType::name)
-                .collect(Collectors.toList());
-        model.addAttribute("commodityTypes", commodityTypes);
-        return "admin";
     }
 
     @PostMapping("/correlations")

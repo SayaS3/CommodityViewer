@@ -34,7 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-
+function confirmDelete() {
+  let confirmation = confirm('Czy na pewno chcesz usunąć użytkownika?');
+  return confirmation;
+}
 
 document.addEventListener("DOMContentLoaded", function() {
   document.querySelector('.sidebar').style.visibility='visible';

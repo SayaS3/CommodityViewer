@@ -251,6 +251,30 @@ h2 {
 .form-select:hover {
   border-color: var(--light-blue);
 }
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination a, .pagination span {
+  color: #007bff;
+  padding: 8px 16px;
+  text-decoration: none;
+  margin: 0 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination .active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.pagination a:hover {
+  background-color: #0056b3;
+  color: #fff;
+}
 .corr-box{
   display: flex;
   flex-direction: column;
@@ -665,12 +689,9 @@ h2 {
 }
 
 .disabled-btn {
-  background-color: #ccc; /* Kolor tła - szary */
-  color: #666; /* Kolor tekstu - ciemny szary */
+  background-color: #cecece;/* Kolor tła - przykładowy niebieski */
   padding: 5px 10px; /* Wielkość wypełnienia, dostosuj według potrzeb */
   border-radius: 5px; /* Zaokrąglone rogi */
-  display: inline-block; /* Blokowy element inline, aby można było stosować padding i border */
-  cursor: not-allowed; /* Zmiana kursora na "not-allowed" */
 }
 
 /* Dodatkowy styl na hover dla nieaktywnych przycisków */
@@ -684,6 +705,20 @@ h2 {
   border-radius: 5px;
   margin-top: 10px;
 }
+.disabled-btn:hover{
+  cursor: pointer;
+}
+.admin-btn {
+  background-color: var(--blue);/* Kolor tła - przykładowy niebieski */
+  color: #fff; /* Kolor tekstu - biały */
+  padding: 10px 15px; /* Wielkość wypełnienia, dostosuj według potrzeb */
+  text-decoration: none; /* Usuń podkreślenie z linku */
+  border-radius: 5px; /* Zaokrąglone rogi */
+  display: inline-block; /* Blokowy element inline, aby można było stosować padding i border */
+  margin-right: 10px;
+  border: none; /* Dodaj tę linię, aby usunąć obramowanie */
+  outline: none;
+}
 .btn {
   background-color: var(--blue);/* Kolor tła - przykładowy niebieski */
   color: #fff; /* Kolor tekstu - biały */
@@ -692,9 +727,14 @@ h2 {
   border-radius: 5px; /* Zaokrąglone rogi */
   display: inline-block; /* Blokowy element inline, aby można było stosować padding i border */
   margin-right: 10px;
+  border: none; /* Dodaj tę linię, aby usunąć obramowanie */
+  outline: none;
+}
+.admin-btn:hover {
+  background-color: #2980b9; /* Kolor tła po najechaniu myszą - ciemniejszy odcień niebieskiego */
+  transition: .3s;
 }
 .btn:hover {
-  color: #666;
   background-color: #2980b9; /* Kolor tła po najechaniu myszą - ciemniejszy odcień niebieskiego */
   transition: .3s;
 }
@@ -720,7 +760,7 @@ h2 {
   position: absolute;
   background-color: #fff;
   color: #000;
-  padding: 5px;
+  padding: 4px;
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-top: 10px;
@@ -804,12 +844,12 @@ input {
 }
 @media (max-width: 768px) {
   .sidebar {
-    width: 160px;
+    width: 120px;
   }
 
   .content {
-    width: calc(100% - 160px);
-    left: 160px;
+    width: calc(100% - 120px);
+    left: 120px;
   }
 
   .content nav .nav-link {

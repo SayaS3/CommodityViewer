@@ -3,14 +3,14 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Commodity Page</title>
+  <title th:text="${selectedCommodity.name}">Commodity Page</title>
   <link rel="stylesheet" type="text/css" href="/styles.css">
-  <script src="https://code.highcharts.com/highcharts.js"></script>
-  <script src="https://code.highcharts.com/modules/stock.js"></script>
-  <script src="https://code.highcharts.com/modules/series-label.js"></script>
-  <script src="https://code.highcharts.com/modules/exporting.js"></script>
-  <script src="https://code.highcharts.com/modules/export-data.js"></script>
-  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+  <script src="/highcharts.js"></script>
+  <script src="/stock.js"></script>
+  <script src="/series-label.js"></script>
+  <script src="/exporting.js"></script>
+  <script src="/export-data.js"></script>
+  <script src="/accessibility.js"></script>
 </head>
 
 <body>
@@ -60,7 +60,7 @@
       </p>
       <p>
         <strong>Główne cechy modelu SARIMAX:</strong>
-      <ul>
+      <ul class="commodities-list-examples">
         <li><strong>Autoregresja (AR):</strong> Model uwzględnia wpływ poprzednich wartości szeregów czasowych na bieżącą wartość prognozy.</li>
         <li><strong>Różnicowanie (I):</strong> Proces różnicowania pomaga w dostosowaniu danych do stacjonarności, co poprawia jakość prognozy.</li>
         <li><strong>Ruchoma średnia (MA):</strong> Model bierze pod uwagę bieżące wartości błędów prognoz, co wpływa na dokładność prognozy.</li>
@@ -80,8 +80,8 @@
       <table class="table">
         <thead>
         <tr>
-          <th>Date</th>
-          <th>Forecast Value</th>
+          <th>Data</th>
+          <th>Przewidywana cena</th>
           <!-- Dodaj inne nagłówki, jeśli są dostępne -->
         </tr>
         </thead>

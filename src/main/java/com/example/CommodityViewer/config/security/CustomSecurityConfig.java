@@ -39,7 +39,6 @@ public class CustomSecurityConfig {
                                 .requestMatchers(mvc.pattern("/" + commodity.name() + "/**"))
                                 .hasAnyRole(USER_ROLE, ADMIN_ROLE);
                     }
-
                     authorize.anyRequest().permitAll();
                 })
                 .formLogin(login -> login

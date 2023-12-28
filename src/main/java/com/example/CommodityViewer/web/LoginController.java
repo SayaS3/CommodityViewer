@@ -1,4 +1,4 @@
-package com.example.CommodityViewer;
+package com.example.CommodityViewer.web;
 
 import com.example.CommodityViewer.Commodity.CommodityType;
 import org.springframework.stereotype.Controller;

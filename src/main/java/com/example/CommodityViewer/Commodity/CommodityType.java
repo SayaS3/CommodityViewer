@@ -36,10 +36,9 @@ public enum CommodityType {
 
     @Override
     public String toString() {
-        return name() + "{" +
-                "unit='" + unit + '\'' +
-                ", currency='" + currency + '\'' +
-                '}';
+        return name() +
+                " unit='" + unit + '\'' +
+                ", currency=" + currency ;
     }
 }
 
