@@ -136,7 +136,7 @@
         chart: {
             type: 'line',
             zoomType: 'x',
-            backgroundColor: '#eee',// Zaznaczanie i zoomowanie po osi X
+            backgroundColor: '#eee', // Kolor tła wykresu
         },
         title: {
             text: '',
@@ -146,7 +146,7 @@
             labels: {
                 formatter: function () {
                     return Highcharts.dateFormat('%e %b %Y', this.value); // Format daty na polski
-                }
+                },
             },
         },
         yAxis: {
@@ -156,22 +156,27 @@
             labels: {
                 formatter: function () {
                     return this.value.toString().replace('.', ','); // Zamień kropkę na przecinek
-                }
+                },
             },
         },
         tooltip: {
             valueDecimals: 2,
-            decimalPoint: ","
+            decimalPoint: ',',
         },
-        series: [{
-            name: commodity1Name,
-            data: seriesData,
-        }, {
-            name: commodity2Name,
-            data: seriesData2,
-        }],
+        series: [
+            {
+                name: commodity1Name,
+                data: seriesData,
+                color: '#7cb5ec', // Kolor dla serii 1
+            },
+            {
+                name: commodity2Name,
+                data: seriesData2,
+                color: '#0dd0a3', // Kolor dla serii 2
+            },
+        ],
         rangeSelector: {
-            selected: 6
+            selected: 6,
         },
         exporting: {
             buttons: {
@@ -183,10 +188,10 @@
                         'downloadSVG',
                         'separator',
                         'downloadCSV',
-                        'downloadXLS'
-                    ]
-                }
-            }
+                        'downloadXLS',
+                    ],
+                },
+            },
         },
         legend: {
             enabled: true, // Włącz legendę
@@ -194,9 +199,10 @@
         plotOptions: {
             series: {
                 connectNulls: true, // Połącz null wartości w serii danych
-            }
+            },
         },
     };
+
     Highcharts.setOptions({
         lang: {
             months: [
