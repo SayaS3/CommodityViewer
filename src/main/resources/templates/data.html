@@ -96,12 +96,10 @@
         </div>
     </main>
 </section>
-
 <script th:inline="javascript">
+
     let rawDates = [[${dates}]];
     let values = [[${values}]];
-
-
     let seriesData = [];
     for (let i = 0; i < rawDates.length; i++) {
         seriesData.push([new Date(rawDates[i]).getTime(), values[i]]);
@@ -126,7 +124,8 @@
     let chartOptions = {
         chart: {
             type: 'line',
-            zoomType: 'x', // Zaznaczanie i zoomowanie po osi X
+            zoomType: 'x',
+            backgroundColor: '#eee',// Zaznaczanie i zoomowanie po osi X
         },
         title: {
             text: '',
@@ -138,6 +137,7 @@
                     return Highcharts.dateFormat('%e %B %Y', this.value); // Format daty na polski
                 }
             },
+
         },
         yAxis: {
             title: {

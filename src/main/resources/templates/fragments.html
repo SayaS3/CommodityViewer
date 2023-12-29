@@ -12,8 +12,8 @@
     </a>
 
     <ul class="side-menu top">
-        <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{'/' + 'correlations'}"  class="acces-commodity-correlations">Korelacje surowców</a>
-        <a th:if="${!#authorization.expression('isAuthenticated()')}" th:href="@{'/' + 'correlations'}" class="no-acces-commodity-correlations">Korelacje surowców</a>
+       <li th:if="${#authorization.expression('isAuthenticated()')}"><a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{'/' + 'correlations'}"  class="acces-commodity-correlations">Korelacje surowców</a></li>
+        <li th:if="${!#authorization.expression('isAuthenticated()')}"><a th:if="${!#authorization.expression('isAuthenticated()')}" th:href="@{'/' + 'correlations'}" class="no-acces-commodity-correlations">Korelacje surowców</a></li>
 
         <div class="commodities-label">
             <span>Surowce</span>

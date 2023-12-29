@@ -842,6 +842,7 @@ input {
   text-align: center;
   margin-top: 32px;
 }
+
 @media (max-width: 768px) {
   .sidebar {
     width: 120px;
