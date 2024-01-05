@@ -22,9 +22,6 @@
     <main>
         <div class="top-main">
             <h1>Panel</h1>
-            <a href="#" class="download-btn">
-                <span class="text">Pobierz raport</span>
-            </a>
         </div>
 
         <div class="commodity-details">
@@ -100,7 +97,9 @@
 
 </section>
 
+
 <script th:inline="javascript">
+
     let forecastDates = [[${forecastDates}]];
     let forecastValues = [[${forecastValues}]];
     let rawDates = [[${dates}]];
@@ -119,6 +118,7 @@
     // Utwórz obiekt konfiguracyjny dla wykresu
     let chartOptions = {
         chart: {
+            animation: false,
             type: 'line',
             zoomType: 'x',
             backgroundColor: '#eee',// Zaznaczanie i zoomowanie po osi X
@@ -160,6 +160,9 @@
             }
         ],
         navigator: {
+            title: {
+                text: '' // pusty napis
+            },
             enabled: true,
             series: {
                 data: seriesData,

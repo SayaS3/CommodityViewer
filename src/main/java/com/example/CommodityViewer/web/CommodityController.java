@@ -14,8 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
-import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
+
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,7 +35,7 @@ public class CommodityController {
 
     @GetMapping
     public String getHomePage(Model model) {
-        List<String> commodityTypes =  Arrays.stream(CommodityType.values())
+        List<String> commodityTypes = Arrays.stream(CommodityType.values())
                 .map(CommodityType::name)
                 .collect(Collectors.toList());
         model.addAttribute("commodityTypes", commodityTypes);
@@ -44,6 +43,7 @@ public class CommodityController {
 
         return "home";
     }
+
     @GetMapping("/correlations")
     public String getCorrelation(Model model) {
         List<String> commodityTypes = Arrays.stream(CommodityType.values())
@@ -87,11 +87,8 @@ public class CommodityController {
                     values2.add(dataPoint.getValue());
                 }
             }
-
-            // Dodaj obliczenia współczynników korelacji do modelu
-            double pearsonCorrelation = calculatePearsonCorrelation(values, values2);
-            double spearmanCorrelation = calculateSpearmanCorrelation(values, values2);
-            // Zaokrąglenie do dwóch miejsc po przecinku
+            double pearsonCorrelation = commodityService.calculatePearsonCorrelation(values, values2);
+            double spearmanCorrelation = commodityService.calculateSpearmanCorrelation(values, values2);
             pearsonCorrelation = Math.round(pearsonCorrelation * 100.0) / 100.0;
             spearmanCorrelation = Math.round(spearmanCorrelation * 100.0) / 100.0;
             model.addAttribute("dates", dates);
@@ -110,45 +107,6 @@ public class CommodityController {
     }
 
 
-    // Metoda do obliczania współczynnika korelacji Pearsona
-    private double calculatePearsonCorrelation(List<Double> values1, List<Double> values2) {
-        PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
-
-        // Znajdź wspólne daty
-        List<Double> commonValues1 = new ArrayList<>();
-        List<Double> commonValues2 = new ArrayList<>();
-        for (int i = 0; i < values1.size(); i++) {
-            if (values2.size() > i) {
-                commonValues1.add(values1.get(i));
-                commonValues2.add(values2.get(i));
-            }
-        }
-
-        double[] array1 = commonValues1.stream().mapToDouble(Double::doubleValue).toArray();
-        double[] array2 = commonValues2.stream().mapToDouble(Double::doubleValue).toArray();
-
-        return pearsonsCorrelation.correlation(array1, array2);
-    }
-
-    // Metoda do obliczania współczynnika korelacji Spearmana
-    private double calculateSpearmanCorrelation(List<Double> values1, List<Double> values2) {
-        SpearmansCorrelation spearmansCorrelation = new SpearmansCorrelation();
-
-        // Znajdź wspólne daty
-        List<Double> commonValues1 = new ArrayList<>();
-        List<Double> commonValues2 = new ArrayList<>();
-        for (int i = 0; i < values1.size(); i++) {
-            if (values2.size() > i) {
-                commonValues1.add(values1.get(i));
-                commonValues2.add(values2.get(i));
-            }
-        }
-
-        double[] array1 = commonValues1.stream().mapToDouble(Double::doubleValue).toArray();
-        double[] array2 = commonValues2.stream().mapToDouble(Double::doubleValue).toArray();
-
-        return spearmansCorrelation.correlation(array1, array2);
-    }
     @GetMapping("/{commodityType:[A-Za-z_]+}")
     public String getDataPage(@PathVariable CommodityType commodityType, Model model) {
 
@@ -183,7 +141,7 @@ public class CommodityController {
 
     @GetMapping("/{commodityType}/testadf")
     public String getTestADFPage(@PathVariable CommodityType commodityType, Model model) {
-        List<String> commodityTypes =  Arrays.stream(CommodityType.values())
+        List<String> commodityTypes = Arrays.stream(CommodityType.values())
                 .map(CommodityType::name)
                 .collect(Collectors.toList());
 
@@ -209,7 +167,7 @@ public class CommodityController {
 
     @GetMapping("/{commodityType}/holtwinters")
     public String getForecastsPage(@PathVariable CommodityType commodityType, Model model) {
-        List<String> commodityTypes =  Arrays.stream(CommodityType.values())
+        List<String> commodityTypes = Arrays.stream(CommodityType.values())
                 .map(CommodityType::name)
                 .collect(Collectors.toList());
 
@@ -259,9 +217,10 @@ public class CommodityController {
             return "error"; // Przekierowanie na stronę główną lub inny odpowiedni adres
         }
     }
+
     @GetMapping("/{commodityType}/sarimax")
     public String getArimaPage(@PathVariable CommodityType commodityType, Model model) {
-        List<String> commodityTypes =  Arrays.stream(CommodityType.values())
+        List<String> commodityTypes = Arrays.stream(CommodityType.values())
                 .map(CommodityType::name)
                 .collect(Collectors.toList());
 

@@ -134,6 +134,7 @@
 
     let chartOptions = {
         chart: {
+            animation: false,
             type: 'line',
             zoomType: 'x',
             backgroundColor: '#eee', // Kolor tła wykresu
@@ -153,11 +154,7 @@
             title: {
                 text: 'Cena',
             },
-            labels: {
-                formatter: function () {
-                    return this.value.toString().replace('.', ','); // Zamień kropkę na przecinek
-                },
-            },
+
         },
         tooltip: {
             valueDecimals: 2,

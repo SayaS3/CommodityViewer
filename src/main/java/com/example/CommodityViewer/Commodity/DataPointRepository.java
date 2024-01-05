@@ -13,5 +13,5 @@ public interface DataPointRepository extends JpaRepository<DataPointEntity, Long
 
     DataPointEntity findTopByCommodityOrderByTimestampDesc(Optional<CommodityEntity> commodity);
 
-    boolean existsByCommodityAndTimestamp(CommodityEntity commodity, Date timestamp);
+
 }

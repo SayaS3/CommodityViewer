@@ -4,8 +4,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class CommodityViewer {
+
+
+
     public static void main(String[] args) {
         SpringApplication.run(CommodityViewer.class, args);
     }
+
 
 }

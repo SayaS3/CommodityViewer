@@ -46,6 +46,7 @@ body.dark {
   --grey: #060714;
   --dark: #fbfbfb;
 }
+
 body.dark select{
   background-color: var(--light);
   color: var(--dark);

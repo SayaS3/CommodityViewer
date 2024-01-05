@@ -14,6 +14,7 @@ import java.util.Optional;
 @Service
 public class UserService {
     private static final String DEFAULT_USER_ROLE = "USER";
+    private static final String ADMIN_ROLE = "ADMIN";
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -53,6 +54,16 @@ public class UserService {
         User user = new User();
         user.setEmail(userRegistration.getEmail());
         user.setPassword(passwordEncoder.encode(userRegistration.getPassword()));
+        user.getRoles().add(defaultRole);
+        userRepository.save(user);
+    }
+    @Transactional
+    public void registerAdmin() {
+        UserRole defaultRole = userRoleRepository.findByName(ADMIN_ROLE)
+                .orElseThrow(() -> new IllegalArgumentException("Domyślna rola użytkownika nie istnieje"));
+        User user = new User();
+        user.setEmail("admin@example.com");
+        user.setPassword(passwordEncoder.encode("adminpass"));
         user.getRoles().add(defaultRole);
         userRepository.save(user);
     }

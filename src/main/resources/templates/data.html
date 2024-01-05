@@ -12,6 +12,7 @@
     <script src="/export-data.js"></script>
     <script src="/accessibility.js"></script>
 </head>
+
 <body>
 <section th:replace="~{fragments :: sidebar}">
 </section>
@@ -20,9 +21,6 @@
     <main>
         <div class="top-main">
             <h1>Panel</h1>
-            <a href="#" class="download-btn">
-                <span class="text">Pobierz raport</span>
-            </a>
         </div>
 
         <div class="commodity-details">
@@ -54,13 +52,11 @@
             <p th:text="${#strings.toString(currency) + '/' + #strings.toString(unit)}" class="commodity-info"></p>
 
 
-
-
             <div class="chart-and-stats">
                 <div class="commodity-chart">
                     <div id="myChart"></div>
                 </div>
-                <div class="commodity-stats">
+                <div class="commodity-stats" >
                     <label for="chartType">Wybierz rodzaj wykresu:</label>
                     <select id="chartType" onchange="updateChartType()">
                         <option value="line">Liniowy</option>
@@ -96,6 +92,7 @@
         </div>
     </main>
 </section>
+
 <script th:inline="javascript">
 
     let rawDates = [[${dates}]];
@@ -123,6 +120,7 @@
     // Utwórz obiekt konfiguracyjny dla wykresu
     let chartOptions = {
         chart: {
+            animation: false,
             type: 'line',
             zoomType: 'x',
             backgroundColor: '#eee',// Zaznaczanie i zoomowanie po osi X
@@ -188,11 +186,9 @@
     let chart;
     chart = Highcharts.stockChart('myChart', chartOptions);
 
-    // Aktualizuj statystyki po załadowaniu wykresu
 
     let xAxis = chart.xAxis[0];
 
-    // Przygotuj dane do wykresu
 
     if (seriesData.length > 0) {
         // Znajdź minimum, maksimum i średnią
@@ -218,7 +214,7 @@
 
     }
     function updateChartType() {
-        var chartType = document.getElementById('chartType').value;
+        let chartType = document.getElementById('chartType').value;
 
         // Aktualizuj typ wykresu
         chart.update({
