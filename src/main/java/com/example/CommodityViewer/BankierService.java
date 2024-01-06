@@ -47,7 +47,7 @@ public class BankierService {
 
             if (existingCommodityOptional.isPresent()) {
                 CommodityEntity existingCommodity = existingCommodityOptional.get();
-                if (!isDataUpToDate(existingCommodity)) {
+                if (!isDataUpToDate(existingCommodity) && isWorkingDay()) {
                     fetchAndSaveData(commodityType, existingCommodity);
                     hasNewData = true;
                 } else {

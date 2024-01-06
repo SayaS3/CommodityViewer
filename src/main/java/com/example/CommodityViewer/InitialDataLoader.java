@@ -7,16 +7,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class InitialDataLoader {
-    private static final String ADMIN_ROLE = "ADMIN";
+
     @Autowired
     private final UserRoleRepository userRoleRepository;
-    @Autowired
-    private final UserRepository userRepository;
+
     @Autowired
     private final UserService userService;
     public InitialDataLoader(UserRoleRepository userRoleRepository, UserRepository userRepository, UserService userService) {
         this.userRoleRepository = userRoleRepository;
-        this.userRepository = userRepository;
         this.userService = userService;
     }
 
