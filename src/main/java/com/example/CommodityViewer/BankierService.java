@@ -139,14 +139,11 @@ public class BankierService {
             File scriptFile = new File("src/main/resources/python/main.py");
             if (scriptFile.exists()) {
                 File outputLogFile = new File("target/classes/python/output.log");
-
                 ProcessBuilder processBuilder = new ProcessBuilder("python", scriptFile.getAbsolutePath());
                 processBuilder.redirectErrorStream(true);
                 processBuilder.redirectOutput(outputLogFile);
-
                 Process process = processBuilder.start();
                 process.waitFor();
-
                 System.out.println("Skrypt wykonany");
             } else {
                 System.out.println("Plik skryptu nie istnieje w lokalizacji: " + scriptFile.getAbsolutePath());

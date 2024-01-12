@@ -40,10 +40,10 @@
 
             <!-- SARIMAX -->
             <a th:if="${#authorization.expression('isAuthenticated()')}"
-               th:href="@{'/' + ${selectedCommodity.name} + '/sarimax'}"
-               class="btn">SARIMAX</a>
+               th:href="@{'/' + ${selectedCommodity.name} + '/arima'}"
+               class="btn">ARIMA</a>
             <a th:if="${!#authorization.expression('isAuthenticated()')}"
-               class="disabled-btn">SARIMAX</a>
+               class="disabled-btn">ARIMA</a>
 
             <h3 th:text="${selectedCommodity.name}">Nazwa Surowca</h3>
 

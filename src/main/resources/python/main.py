@@ -1,11 +1,11 @@
 import pandas as pd
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
-from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.arima.model import ARIMA
 from sqlalchemy import create_engine
 from sqlalchemy import text
 
-engine = create_engine('mysql+mysqlconnector://root:bazahaslo@localhost/commodity')
+engine = create_engine('mysql+pymysql://root:bazahaslo@mysql/commodity')
 
 # Pobranie danych z tabeli commodities
 query_commodity_data = "SELECT * FROM commodities"
@@ -79,7 +79,17 @@ def save_forecast_to_db(engine, commodity_id, forecast):
             trans.commit()
         except Exception as e:
             trans.rollback()
-
+def save_arima_to_db(engine, commodity_id, forecast):
+    with engine.connect() as connection:
+        trans = connection.begin()
+        try:
+            for date, value in forecast.items():
+                connection.execute(text(
+                    "INSERT INTO arima (commodity_id, forecast_date, forecast_value) VALUES (:commodity_id, :forecast_date, :forecast_value)"),
+                    {"commodity_id": commodity_id, "forecast_date": date, "forecast_value": value})
+            trans.commit()
+        except Exception as e:
+            trans.rollback()
 def holt_winters_forecast(engine, series):
     try:
         if not isinstance(series, pd.Series) or series.empty:
@@ -100,71 +110,59 @@ def holt_winters_forecast(engine, series):
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
-def delete_previous_sarimax_results(engine, commodity_id):
+
+
+
+def delete_previous_arima_results(engine, commodity_id):
     with engine.connect() as connection:
         trans = connection.begin()
         try:
-            connection.execute(text("DELETE FROM sarimax WHERE commodity_id = :commodity_id"), {'commodity_id': commodity_id})
+            connection.execute(text("DELETE FROM arima WHERE commodity_id = :commodity_id"), {'commodity_id': commodity_id})
             trans.commit()
         except Exception as e:
             trans.rollback()
 
-def save_sarimax_forecast_to_db(engine, commodity_id, forecast):
-    with engine.connect() as connection:
-        trans = connection.begin()
-        try:
-            for date, value in forecast.items():
-                connection.execute(text(
-                    "INSERT INTO sarimax (commodity_id, forecast_date, forecast_value) VALUES (:commodity_id, :forecast_date, :forecast_value)"),
-                    {"commodity_id": commodity_id, "forecast_date": date, "forecast_value": value})
-            trans.commit()
-        except Exception as e:
-            trans.rollback()
-
-
-def sarimax_forecast(engine, series, commodity_id):
+def arima_forecast(engine, series):
     try:
         if not isinstance(series, pd.Series) or series.empty:
             raise ValueError("Input series must be a non-empty pandas Series.")
 
-        # Liczba kroków prognozy
-        forecast_steps = 12  # Dostosuj, ile kroków chcesz prognozować
+        order = (3, 1, 2)  # Adjust the order parameters based on your data
 
-        # Przygotuj dane w formie DataFrame dla modelu SARIMAX
-        model = SARIMAX(series, order=(1, 1, 1), seasonal_order=(1, 1, 1, 5), enforce_stationarity=False)  # Możesz dostosować parametry
-        model_fit = model.fit(disp=False)
+        model = ARIMA(series, order=order)
+        model_fit = model.fit()
 
-        # Generuj prognozę
-        forecast = model_fit.get_forecast(steps=forecast_steps)
-        forecast_values = forecast.predicted_mean
+        forecast_steps = 12  # You can adjust the forecast horizon
+        forecast = model_fit.forecast(steps=forecast_steps)
 
-        # Przygotuj indeks daty dla prognozy
         last_date = series.index[-1]
-        date_range = pd.date_range(start=last_date + pd.offsets.Day(1), periods=forecast_steps, freq='D')
-        forecast_values.index = date_range
 
-        return forecast_values
+        date_range = pd.date_range(start=last_date + pd.offsets.Day(1), periods=forecast_steps, freq='D')
+
+        forecast.index = date_range
+
+        return forecast
 
     except Exception as e:
-        print(f"An error occurred in SARIMAX modeling: {e}")
+        print(f"An error occurred in ARIMA forecasting: {e}")
         return None
-# Wykonaj test ADF i prognozowanie dla surowców
+
 for commodity_id in df_commodity_data['id']:
     series = df_data_point[df_data_point['commodity_id'] == commodity_id]['value']
 
-    # Usuń poprzednie wyniki dla tego surowca
+    # Delete previous ADF results for this commodity
     delete_previous_adf_results(engine, commodity_id)
     adf_test(engine, series, commodity_id)
 
-    # Usuń stare prognozy
+    # Delete previous Holt-Winters forecasts
     delete_previous_forecasts(engine, commodity_id)
-    forecast = holt_winters_forecast(engine, series)
-    # Zapisz nowe prognozy
-    save_forecast_to_db(engine, commodity_id, forecast)
+    forecast_hw = holt_winters_forecast(engine, series)
+    save_forecast_to_db(engine, commodity_id, forecast_hw)
 
-    delete_previous_sarimax_results(engine, commodity_id)
-    sarimax = sarimax_forecast(engine, series, commodity_id)
-    save_sarimax_forecast_to_db(engine, commodity_id, sarimax)
+    # Delete previous ARIMA forecasts
+    delete_previous_arima_results(engine, commodity_id)
+    forecast_arima = arima_forecast(engine, series)
+    save_arima_to_db(engine, commodity_id, forecast_arima)
 
-# Zamknięcie połączenia z bazą danych
+# Close the database connection
 engine.dispose()

@@ -27,6 +27,7 @@ public class InitialDataLoader {
             userRoleRepository.save(new UserRole("USER", "ma dostęp do analizy cen surowców"));
             userService.registerAdmin();
         }
+
     }
 
 }

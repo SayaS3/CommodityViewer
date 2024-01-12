@@ -218,7 +218,7 @@ public class CommodityController {
         }
     }
 
-    @GetMapping("/{commodityType}/sarimax")
+    @GetMapping("/{commodityType}/arima")
     public String getArimaPage(@PathVariable CommodityType commodityType, Model model) {
         List<String> commodityTypes = Arrays.stream(CommodityType.values())
                 .map(CommodityType::name)
@@ -265,7 +265,7 @@ public class CommodityController {
             model.addAttribute("forecasts", forecasts);
             model.addAttribute("selectedCommodity", selectedCommodity);
             model.addAttribute("commodityTypes", commodityTypes);
-            return "sarimax";
+            return "arima";
         } else {
             return "error"; // Przekierowanie na stronę główną lub inny odpowiedni adres
         }

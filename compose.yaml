@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  commodityviewer:
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/commodity?useSSL=false&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: bazahaslo
+      MYSQL_DATABASE: commodity
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_CHARACTER_SET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    ports:
+      - "3307:3306"
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+
+
+
