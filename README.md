@@ -22,10 +22,9 @@ Aplikacja Prognozująca Surowce to narzędzie stworzone w języku Java przy uży
 ## Konfiguracja za pomoca Dockera
 
     - Uruchom aplikację, bazę danych oraz Pythona za pomocą Dockera, wykonując polecenie:
-        ```bash
+```bash
         docker-compose up
-        ```
-
+```
 ## Opis funkcji
 
 - **Test ADF (Augmented Dickey-Fuller):**
