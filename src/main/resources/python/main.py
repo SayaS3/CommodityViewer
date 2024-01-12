@@ -5,7 +5,7 @@ from statsmodels.tsa.arima.model import ARIMA
 from sqlalchemy import create_engine
 from sqlalchemy import text
 
-engine = create_engine('mysql+pymysql://root:bazahaslo@mysql/commodity')
+engine = create_engine('mysql+pymysql://root:bazahaslo@localhost/commodity')
 
 # Pobranie danych z tabeli commodities
 query_commodity_data = "SELECT * FROM commodities"
