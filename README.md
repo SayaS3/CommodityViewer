@@ -4,14 +4,6 @@
 
 Aplikacja Prognozująca Surowce to narzędzie stworzone w języku Java przy użyciu frameworka Spring. Celem aplikacji jest prognozowanie wartości surowców na podstawie historycznych danych, przy wykorzystaniu testów statystycznych oraz modeli prognozowania.
 
-## Wymagania
-
-- Java 17 lub nowsza
-- Python 3.6 lub nowszy
-- biblioteki Python
-- Baza danych MySQL na porcie 3306
-- Docker
-- Docker Compose
 
 ## Konfiguracja
 
@@ -27,7 +19,8 @@ Aplikacja Prognozująca Surowce to narzędzie stworzone w języku Java przy uży
         ```
     - Zainstaluj wymagane biblioteki Python, wykonując polecenie: `pip install -r requirements.txt` znajdującym się w folderze `resources/python` w projekcie.
 
-3. **Konfiguracja za pomocą Dockera:**
+## Konfiguracja za pomoca Dockera
+
     - Uruchom aplikację, bazę danych oraz Pythona za pomocą Dockera, wykonując polecenie:
         ```bash
         docker-compose up
