@@ -29,10 +29,39 @@ Aplikacja Prognozująca Surowce to narzędzie stworzone w języku Java przy uży
     - **Ruchoma średnia (MA):** Model bierze pod uwagę bieżące wartości błędów prognoz, co wpływa na dokładność prognozy.
 
 ## Uruchomienie
-Uruchom aplikację, bazę danych oraz Pythona za pomocą Dockera, wykonując polecenie:
-```bash
-docker-compose up
-```
+
+Aby uruchomić aplikację wraz z bazą danych i środowiskiem Pythona, wykonaj poniższe kroki:
+
+1. **Pobierz Docker:**
+    - Upewnij się, że masz zainstalowany Docker na swoim systemie operacyjnym.
+    - Możesz pobrać Docker ze strony [https://www.docker.com/get-started](https://www.docker.com/get-started).
+
+2. **Uruchomienie za pomocą Dockera:**
+    - Otwórz terminal w folderze projektu.
+    - Wykonaj polecenie:
+        ```bash
+        docker-compose up
+        ```
+
+3. **Sprawdź działanie:**
+    - Po zakończeniu procesu uruchamiania, aplikacja, baza danych i Python powinny być dostępne.
+    - Otwórz przeglądarkę i odwiedź [http://localhost:8080](http://localhost:8080), aby skorzystać z aplikacji.
+
+**Uwaga:** Upewnij się, że nie masz już zajętego portu 8080 na swoim systemie, aby uniknąć konfliktów.
+
+## Wymagane narzędzia
+
+Aby skorzystać z Docker Compose, musisz mieć zainstalowane:
+- Docker
+- Docker Compose
+
+Możesz pobrać te narzędzia ze strony [https://www.docker.com/get-started](https://www.docker.com/get-started).
+
+## Autor
+
+Lukasz Koziol
+
+---
 
 ## Autor
 
