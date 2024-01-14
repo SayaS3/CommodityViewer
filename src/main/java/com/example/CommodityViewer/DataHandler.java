@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class BankierService {
+public class DataHandler {
 
     private final String BANKIER_URL = "https://www.bankier.pl/new-charts/get-data?symbol=";
 
