@@ -64,6 +64,12 @@ Aby skorzystać z Docker Compose, musisz mieć zainstalowane:
 
 Możesz pobrać te narzędzia ze strony [https://www.docker.com/get-started](https://www.docker.com/get-started).
 
+## Screenshots
+![Przechwytywanie1](https://github.com/SayaS3/CommodityViewer/assets/122474783/b4c375f5-a0a1-4e4a-9da3-43844dc6781c)
+![Przechwytywanie2](https://github.com/SayaS3/CommodityViewer/assets/122474783/744917a2-62e6-46b9-adfc-e97610e7ea2a)
+![image](https://github.com/SayaS3/CommodityViewer/assets/122474783/95c1337f-df8e-4402-a84c-3d1716e22cd1)
+
+
 ## Autor
 
 Łukasz Kozioł
