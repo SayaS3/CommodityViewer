@@ -1,4 +1,4 @@
-# Aplikacja Prognozująca Surowce
+# Aplikacja Prognozująca Ceny Surowców
 
 ## Wprowadzenie
 
