@@ -70,3 +70,4 @@ Możesz pobrać te narzędzia ze strony [https://www.docker.com/get-started](htt
 
 ---
 
+# gfd
