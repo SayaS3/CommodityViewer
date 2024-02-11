@@ -16,7 +16,7 @@ RUN pip3 install --no-cache-dir --upgrade sqlalchemy
 # Skopiuj pliki z projektu do kontenera
 COPY CommodityViewer-0.0.1-SNAPSHOT.jar /app.jar
 COPY src/main/resources/python/main.py /src/main/resources/python/main.py
-
+COPY src/main/resources/python/output.log target/classes/python/output.log
 
 # Uruchom aplikację Java
 CMD ["java", "-jar", "/app.jar"]
