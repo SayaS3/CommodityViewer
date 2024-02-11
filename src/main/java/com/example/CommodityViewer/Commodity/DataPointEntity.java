@@ -12,9 +12,9 @@ public class DataPointEntity {
 private Long id;
     @ManyToOne
     @JoinColumn(name = "commodity_id")
-    private CommodityEntity commodity;
+    private Commodity commodity;
 
-    @Column(name = "timestamp")  // Zmiana typu na DATE
+    @Column(name = "timestamp")
     private Date timestamp;
     @Column(name = "value")
     private Double value;
@@ -29,11 +29,11 @@ private Long id;
     public String getCommodityName() {
         return commodity != null ? commodity.getName() : null;
     }
-    public CommodityEntity getCommodity() {
+    public Commodity getCommodity() {
         return commodity;
     }
 
-    public void setCommodity(CommodityEntity commodity) {
+    public void setCommodity(Commodity commodity) {
         this.commodity = commodity;
     }
 

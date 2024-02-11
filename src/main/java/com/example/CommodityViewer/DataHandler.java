@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.DayOfWeek;
@@ -33,7 +34,6 @@ public class DataHandler {
         try {
             checkAndUpdateDataAndRunScript();
         } catch (Exception e) {
-            // Obsługa wyjątku, na przykład logowanie błędu
             System.err.println("Błąd podczas pobierania danych: " + e.getMessage());
 
         }
@@ -43,10 +43,10 @@ public class DataHandler {
         boolean hasNewData = false;
 
         for (CommodityType commodityType : CommodityType.values()) {
-            Optional<CommodityEntity> existingCommodityOptional = commodityRepository.findByName(commodityType.name());
+            Optional<Commodity> existingCommodityOptional = commodityRepository.findByName(commodityType.name());
 
             if (existingCommodityOptional.isPresent()) {
-                CommodityEntity existingCommodity = existingCommodityOptional.get();
+                Commodity existingCommodity = existingCommodityOptional.get();
                 if (!isDataUpToDate(existingCommodity) && isWorkingDay()) {
                     fetchAndSaveData(commodityType, existingCommodity);
                     hasNewData = true;
@@ -60,21 +60,20 @@ public class DataHandler {
         }
 
         if (hasNewData) {
-            System.out.println("Uruchamiam skrypt i obliczam dane, moze to chwile potrwac...");
             runPythonScript();
         } else {
             System.out.println("Brak nowych danych dla wszystkich surowców.");
         }
     }
 
-    private void fetchAndSaveData(CommodityType commodityType, CommodityEntity existingCommodity) {
+    private void fetchAndSaveData(CommodityType commodityType, Commodity existingCommodity) {
         String fullUrl = buildUrlForCommodity(commodityType);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ApiResponse> response = restTemplate.getForEntity(fullUrl, ApiResponse.class);
         ApiResponse apiResponse = response.getBody();
         List<DataPointEntity> dataPoints = new ArrayList<>();
         if (apiResponse != null && !apiResponse.getMain().isEmpty()) {
-            CommodityEntity savedCommodity = saveOrUpdateCommodity(commodityType, existingCommodity);
+            Commodity savedCommodity = saveOrUpdateCommodity(commodityType, existingCommodity);
 
             Date lastSavedDataTimestamp = getLastSavedDataTimestamp(savedCommodity);
 
@@ -94,35 +93,37 @@ public class DataHandler {
     }
 
 
-    private CommodityEntity saveOrUpdateCommodity(CommodityType commodityType, CommodityEntity existingCommodity) {
-        CommodityEntity commodityEntity = existingCommodity != null ? existingCommodity : new CommodityEntity();
-        commodityEntity.setName(commodityType.name());
-        return commodityRepository.save(commodityEntity);
+    private Commodity saveOrUpdateCommodity(CommodityType commodityType, Commodity existingCommodity) {
+        Commodity commodity = existingCommodity != null ? existingCommodity : new Commodity();
+        commodity.setName(commodityType.name());
+        return commodityRepository.save(commodity);
     }
 
-    private DataPointEntity createDataPointEntity(CommodityEntity savedCommodity, Date dataPointTimestamp, List<Number> dataPoint) {
+    private DataPointEntity createDataPointEntity(Commodity savedCommodity, Date dataPointTimestamp, List<Number> dataPoint) {
         DataPointEntity dataPointEntity = new DataPointEntity();
         dataPointEntity.setCommodity(savedCommodity);
         dataPointEntity.setTimestamp(dataPointTimestamp);
         dataPointEntity.setValue(dataPoint.get(1).doubleValue());
         return dataPointEntity;
     }
+
     private boolean isWorkingDay() {
         LocalDate currentDate = LocalDate.now();
         DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
         return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
     }
-    private boolean isDatabaseEmpty(CommodityEntity commodityEntity) {
-        List<DataPointEntity> existingDataPoints = dataPointRepository.findByCommodity(commodityEntity);
+
+    private boolean isDatabaseEmpty(Commodity commodity) {
+        List<DataPointEntity> existingDataPoints = dataPointRepository.findByCommodity(commodity);
         return existingDataPoints.isEmpty();
     }
 
-    private Date getLastSavedDataTimestamp(CommodityEntity commodity) {
+    private Date getLastSavedDataTimestamp(Commodity commodity) {
         DataPointEntity lastSavedDataPoint = dataPointRepository.findTopByCommodityOrderByTimestampDesc(Optional.ofNullable(commodity));
         return lastSavedDataPoint != null ? lastSavedDataPoint.getTimestamp() : new Date(0);
     }
 
-    private boolean isDataUpToDate(CommodityEntity commodity) {
+    private boolean isDataUpToDate(Commodity commodity) {
         DataPointEntity latestDataPoint = dataPointRepository.findTopByCommodityOrderByTimestampDesc(Optional.ofNullable(commodity));
         return latestDataPoint != null && isAfterOrEqualYesterday(latestDataPoint.getTimestamp());
     }
@@ -135,6 +136,7 @@ public class DataHandler {
     }
 
     public void runPythonScript() {
+        System.out.println("Uruchamiam skrypt i obliczam dane, moze to chwile potrwac...");
         try {
             File scriptFile = new File("src/main/resources/python/main.py");
             if (scriptFile.exists()) {
@@ -152,6 +154,7 @@ public class DataHandler {
             e.printStackTrace();
         }
     }
+
     private String buildUrlForCommodity(CommodityType commodityType) {
         return BANKIER_URL + commodityType.name() + "&intraday=false&type=area&max_period=true";
     }

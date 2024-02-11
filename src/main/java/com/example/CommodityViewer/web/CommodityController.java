@@ -4,7 +4,7 @@ import com.example.CommodityViewer.ADF.AdfResult;
 import com.example.CommodityViewer.ADF.AdfResultService;
 import com.example.CommodityViewer.ARIMA.Arima;
 import com.example.CommodityViewer.ARIMA.ArimaService;
-import com.example.CommodityViewer.Commodity.CommodityEntity;
+import com.example.CommodityViewer.Commodity.Commodity;
 import com.example.CommodityViewer.Commodity.CommodityService;
 import com.example.CommodityViewer.Commodity.CommodityType;
 import com.example.CommodityViewer.Commodity.DataPointEntity;
@@ -64,8 +64,8 @@ public class CommodityController {
         List<String> commodityTypes = Arrays.stream(CommodityType.values())
                 .map(CommodityType::name)
                 .collect(Collectors.toList());
-        CommodityEntity selectedCommodity1 = commodityService.findCommodityByName(commodity1).orElse(null);
-        CommodityEntity selectedCommodity2 = commodityService.findCommodityByName(commodity2).orElse(null);
+        Commodity selectedCommodity1 = commodityService.findCommodityByName(commodity1).orElse(null);
+        Commodity selectedCommodity2 = commodityService.findCommodityByName(commodity2).orElse(null);
 
         if (selectedCommodity1 != null && selectedCommodity2 != null) {
             List<DataPointEntity> dataPoints1 = commodityService.getDataPointsForCommodity(selectedCommodity1.getName());
@@ -147,7 +147,7 @@ public class CommodityController {
 
         commodityService.findCommodityByName(commodityType.name()).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
 
-        CommodityEntity selectedCommodity = commodityService.findCommodityByName(commodityType.name()).orElse(null);
+        Commodity selectedCommodity = commodityService.findCommodityByName(commodityType.name()).orElse(null);
 
         if (selectedCommodity != null) {
             commodityService.findCommodityByName(commodityType.name()).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
@@ -173,7 +173,7 @@ public class CommodityController {
 
         commodityService.findCommodityByName(commodityType.name()).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
 
-        CommodityEntity selectedCommodity = commodityService.findCommodityByName(commodityType.name()).orElse(null);
+        Commodity selectedCommodity = commodityService.findCommodityByName(commodityType.name()).orElse(null);
 
         List<String> dates = new ArrayList<>();
         List<Double> values = new ArrayList<>();
@@ -226,7 +226,7 @@ public class CommodityController {
 
         commodityService.findCommodityByName(commodityType.name()).ifPresent(commodity -> model.addAttribute("selectedCommodity", commodity));
 
-        CommodityEntity selectedCommodity = commodityService.findCommodityByName(commodityType.name()).orElse(null);
+        Commodity selectedCommodity = commodityService.findCommodityByName(commodityType.name()).orElse(null);
 
         List<String> dates = new ArrayList<>();
         List<Double> values = new ArrayList<>();

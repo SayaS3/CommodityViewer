@@ -9,9 +9,6 @@ public class DataPoint {
     private Date timestamp;
     private Double value;
 
-    public DataPoint() {
-    }
-
     public Date getTimestamp() {
         return timestamp;
     }
