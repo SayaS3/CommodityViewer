@@ -19,13 +19,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/admin")
 public class AdminController {
 
     @Autowired
     private UserService userService;
 
-    @GetMapping("/admin")
+    @GetMapping
     public String getAdminPage(@RequestParam(defaultValue = "0") int page,
                                @RequestParam(required = false) String search,
                                Model model) {
@@ -51,7 +51,7 @@ public class AdminController {
         return "admin";
     }
 
-    @PostMapping("/admin")
+    @PostMapping
     public String deleteUser(@RequestParam Long userId) {
         userService.deleteUser(userId);
         return "redirect:/admin";

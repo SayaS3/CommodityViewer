@@ -6,18 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class CommodityService {
     @Autowired
     private CommodityRepository commodityRepository;
-    public Optional<CommodityEntity> findCommodityByName(String commodityName) {
+    public Optional<Commodity> findCommodityByName(String commodityName) {
         return commodityRepository.findByName(commodityName);
     }
     public List<DataPointEntity> getDataPointsForCommodity(String commodityName) {
-        Optional<CommodityEntity> commodityOptional = commodityRepository.findByName(commodityName);
-        return commodityOptional.map(CommodityEntity::getDataPoints).orElse(Collections.emptyList());
+        Optional<Commodity> commodityOptional = commodityRepository.findByName(commodityName);
+        return commodityOptional.map(Commodity::getDataPoints).orElse(Collections.emptyList());
     }
     public double calculatePearsonCorrelation(List<Double> values1, List<Double> values2) {
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
@@ -56,10 +55,5 @@ public class CommodityService {
         double[] array2 = commonValues2.stream().mapToDouble(Double::doubleValue).toArray();
 
         return spearmansCorrelation.correlation(array1, array2);
-    }
-    private List<String> getCommodityTypesList() {
-        return Arrays.stream(CommodityType.values())
-                .map(CommodityType::name)
-                .collect(Collectors.toList());
     }
 }

@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface CommodityRepository extends JpaRepository<CommodityEntity, Long> {
-        Optional<CommodityEntity> findByName(String commodityType);
+public interface CommodityRepository extends JpaRepository<Commodity, Long> {
+        Optional<Commodity> findByName(String commodityType);
 }

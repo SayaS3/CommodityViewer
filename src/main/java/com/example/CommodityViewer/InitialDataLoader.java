@@ -13,7 +13,7 @@ public class InitialDataLoader {
 
     @Autowired
     private final UserService userService;
-    public InitialDataLoader(UserRoleRepository userRoleRepository, UserRepository userRepository, UserService userService) {
+    public InitialDataLoader(UserRoleRepository userRoleRepository, UserService userService) {
         this.userRoleRepository = userRoleRepository;
         this.userService = userService;
     }
@@ -21,7 +21,6 @@ public class InitialDataLoader {
 
     @PostConstruct
     public void init() {
-        // Sprawdzamy, czy role są już w bazie
         if (userRoleRepository.count() == 0) {
             userRoleRepository.save(new UserRole("ADMIN", "ma dostęp do panelu admina, zarządza użytkownikami"));
             userRoleRepository.save(new UserRole("USER", "ma dostęp do analizy cen surowców"));
